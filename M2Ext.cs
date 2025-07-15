@@ -11,6 +11,7 @@ using M2BradleyExtended;
 using GHPC.Utility;
 using MelonLoader;
 using GHPC.Weapons;
+using GHPC.Equipment.Optics;
 
 namespace M2BradleyExtended
 {
@@ -19,8 +20,10 @@ namespace M2BradleyExtended
         static MelonPreferences_Entry<bool> m2_patch;
         static MelonPreferences_Entry<bool> m2a2_armour_package;
 
+        static MelonPreferences_Entry<bool> quickswap_bins;
         static MelonPreferences_Entry<bool> use_m919_apfsds;
         static MelonPreferences_Entry<string> tow_missile_type;
+        static MelonPreferences_Entry<bool> has_enhanced_bushmaster;
 
         static MelonPreferences_Entry<bool> has_lrf;
         static MelonPreferences_Entry<bool> has_ibas;
@@ -34,15 +37,36 @@ namespace M2BradleyExtended
             m2a2_armour_package = cfg.CreateEntry<bool>("Addon Armour Package", true);
             m2a2_armour_package.Comment = "Addon 25.4mm steel plates for hull and turret";
 
-            use_m919_apfsds = cfg.CreateEntry<bool>("Use M919 APFSDS-T", true);
+            //TODO
+            quickswap_bins = cfg.CreateEntry<bool>("Quick Refill Ammo Bins", true);
+            quickswap_bins.Comment = "Reduces time to replenish autocannon ammo bins to 15 seconds";
 
-            has_lrf = cfg.CreateEntry<bool>("Laser Rangefinder", true);
+            //TODO
+            has_enhanced_bushmaster = cfg.CreateEntry<bool>("Enhanced M242 Bushmaster", true);
+            has_enhanced_bushmaster.Comment = "Increased autocannon accuracy (plus cooler looking muzzle brake on M2A2 and beyond)";
+
+            use_m919_apfsds = cfg.CreateEntry<bool>("Use M919 APFSDS-T", true);
+            use_m919_apfsds.Comment = "Increased penetration, velocity over M791 APDS-T";
+
+            tow_missile_type = cfg.CreateEntry<string>("TOW Missile", "TOW2");
+            tow_missile_type.Comment = "Default, TOW2, TOW2A, TOW2B";
+
+            has_lrf = cfg.CreateEntry<bool>("Has Laser Rangefinder", true);
+            has_lrf.Comment = "Does not have automatic lead";
+
+            has_ibas = cfg.CreateEntry<bool>("Has IBAS", false);
+            has_ibas.Comment = "Complete overhaul for day and thermal sight; has automatic lead, autotracking, LRF";
+
+            has_citv = cfg.CreateEntry<bool>("Has CITV", false);
+            has_citv.Comment = "Gives commander their own thermal optic; ";
         }
 
         public static IEnumerator Convert(GameState _) {
             foreach (Vehicle vic in Mod.vics) {
                 if (vic.GetComponent<AlreadyConverted>() != null) continue;
                 if (vic.UniqueName != "M2BRADLEY" && vic.UniqueName != "M2BRADLEY(ALT)") continue;
+
+                bool is_ap_heavy = vic.UniqueName == "M2BRADLEY(ALT)";
 
                 GameObject go = vic.gameObject;
                 Transform rig = go.transform.Find("M2BRADLEY_rig/lp_hull005");
@@ -52,29 +76,91 @@ namespace M2BradleyExtended
                 LoadoutManager loadout_manager = vic.GetComponent<LoadoutManager>();
                 WeaponsManager weapons_manager = vic.GetComponent<WeaponsManager>();
                 WeaponSystem bushmaster = weapons_manager.Weapons[0].Weapon;
+                WeaponSystem tow = weapons_manager.Weapons[1].Weapon;
+                WeaponSystem m240 = weapons_manager.Weapons[2].Weapon;
+                AmmoFeed bushmaster_feed = bushmaster.Feed;
+                AmmoFeed tow_feed = tow.Feed;
 
+                UsableOptic day_optic = go.transform.Find("M2BRADLEY_rig/HULL/Turret/GPS Optic").GetComponent<UsableOptic>();
+                UsableOptic night_optic = day_optic.slot.LinkedNightSight.PairedOptic;
+
+                Transform day_hud = day_optic.transform.Find("M2 Bradley GPS canvas/HUD elements");
+                Transform night_hud = night_optic.transform.Find("M2 Bradley GPS canvas (1)/HUD elements");
+                Transform[] huds = new Transform[] { day_hud, night_hud };
+
+                string tow_type = tow_missile_type.Value.ToUpper();         
+                if (tow_type != null && tow_type != "DEFAULT") {
+                    GHPC.Weapons.AmmoRack tow_rack = tow_feed.ReadyRack;
+                    AmmoType.AmmoClip tow_clip = Ammo.tow_missiles[tow_type].ClipType;
+                    tow_rack.ClipTypes[0] = tow_clip;
+                    tow_rack.StoredClips = new List<AmmoType.AmmoClip>()
+                    {
+                        tow_clip,
+                        tow_clip,
+                        tow_clip,
+                        tow_clip,
+                        tow_clip
+                    };
+
+                    tow_feed.AmmoTypeInBreech = null;
+                    tow_feed.Start();
+                }
+
+                if (has_ibas.Value)
+                {
+                    List<GameObject> temp_bushmaster_exclusive = bushmaster.ExclusiveItems.ToList();
+                    temp_bushmaster_exclusive.RemoveRange(0, 2);
+                    bushmaster.ExclusiveItems = temp_bushmaster_exclusive.ToArray();
+
+                    List<GameObject> temp_m240_exclusive = m240.ExclusiveItems.ToList();
+                    temp_m240_exclusive.RemoveRange(0, 2);
+                    m240.ExclusiveItems = temp_m240_exclusive.ToArray();
+
+                    IBAS.Add(day_optic, bushmaster.FCS);
+                    tow.GuidanceUnit.AimElement = day_optic.transform;
+                }
+                
                 if (has_lrf.Value) {
                     bushmaster.FCS.MaxLaserRange = 4000f;
+
+                    day_optic.RangeTextArchetype = "0000";
+                    day_optic.RangeTextDivideBy = 1;
+                    night_optic.RangeTextArchetype = "0000";
+                    night_optic.RangeTextDivideBy = 1;
+
+                    foreach (Transform hud in huds)
+                    {
+                        hud.Find("tow selected").localPosition = new Vector3(-40f * 2f, -173f, 0f);
+                        hud.Find("762 selected").localPosition = new Vector3(40f * 2f, -173f, 0f);
+                        hud.Find("autocannon ammo types/AP selected").localPosition = new Vector3(60f * 2f, -173f, 0f);
+                        hud.Find("autocannon ammo types/HE selected").localPosition = new Vector3(-60f * 2f, -173f, 0f);
+                    }
                 }
 
                 if (use_m919_apfsds.Value) {
-                    // TODO: replace reserve bins
-                    loadout_manager.LoadedAmmoTypes[0] = Ammo.m919_70_clip_codex;
+                    AmmoClipCodexScriptable ap_clip = is_ap_heavy ? Ammo.m919_230_clip_codex : Ammo.m919_70_clip_codex;
+                    loadout_manager.LoadedAmmoTypes[0] = Ammo.m919_50_clip_codex;
 
                     GHPC.Weapons.AmmoRack rack = loadout_manager.RackLoadouts[0].Rack;
-                    loadout_manager.RackLoadouts[0].OverrideInitialClips[0] = Ammo.m919_70_clip_codex;
-                    rack.ClipTypes[0] = Ammo.m919_70_clip_codex.ClipType;
+                    loadout_manager.RackLoadouts[0].OverrideInitialClips[0] = ap_clip;
+                    rack.ClipTypes[0] = ap_clip.ClipType;
                     Util.EmptyRack(rack);
+
+                    GHPC.Weapons.AmmoRack reserve = loadout_manager.RackLoadouts[1].Rack;
+                    reserve.ClipTypes[0] = Ammo.m919_50_clip_codex.ClipType;
+                    Util.EmptyRack(reserve);
 
                     loadout_manager.SpawnCurrentLoadout();
                     bushmaster.Feed.AmmoTypeInBreech = null;
                     bushmaster.Feed.LoadedClipType = null;
                     bushmaster.Feed.Start();
                     loadout_manager.RegisterAllBallistics();
+
+                    bushmaster_feed.ExclusiveItems[0].AdditionalAmmo = new AmmoClipCodexScriptable[] { Ammo.m919_230_clip_codex, Ammo.m919_70_clip_codex, Ammo.m919_50_clip_codex };
+                    bushmaster_feed.ToggleExclusiveItems(ap_clip.ClipType);
                 }
 
-                if (m2a2_armour_package.Value)
-                {
+                if (m2a2_armour_package.Value) {
                     GameObject armour_kit = GameObject.Instantiate(Assets.m2a2_armour_kit, rig);
                     armour_kit.transform.localEulerAngles = new Vector3(0f, 90f, 90f);
 
@@ -114,12 +200,10 @@ namespace M2BradleyExtended
                     original_hull_armour.Find("UnknownMaterialAndThickness (WT says Alu 1\")").gameObject.SetActive(false);
                     original_hull_armour.Find("Fording ramp Steel 0.25\"?").gameObject.SetActive(false);
                     Transform og_sides = original_hull_armour.Find("Hull Sides Alu 7039");
-                    og_sides.GetComponent<MeshFilter>().mesh = Assets.m2_bradley_hull_side_modified;
                     og_sides.GetComponent<MeshFilter>().sharedMesh = Assets.m2_bradley_hull_side_modified;
                     og_sides.GetComponent<MeshCollider>().sharedMesh = Assets.m2_bradley_hull_side_modified;
 
                     Transform og_sides_applique = original_hull_armour.Find("Hull Sides Hard Steel 0.25\"");
-                    og_sides_applique.GetComponent<MeshFilter>().mesh = Assets.m2_bradley_hull_side_applique_modified;
                     og_sides_applique.GetComponent<MeshFilter>().sharedMesh = Assets.m2_bradley_hull_side_applique_modified;
                     og_sides_applique.GetComponent<MeshCollider>().sharedMesh = Assets.m2_bradley_hull_side_applique_modified;
 
@@ -134,9 +218,22 @@ namespace M2BradleyExtended
                 if (m2a2_armour_package.Value) {
                     vic._friendlyName = "M2A2";
 
-                    if (has_lrf.Value) {
+                    if (has_lrf.Value)
+                    {
                         vic._friendlyName = "M2A2 ODS";
                     }
+
+                    if (has_ibas.Value)
+                    {
+                        vic._friendlyName = "M2A2 ODS-SA";
+
+                        if (has_citv.Value)
+                        {
+                            vic._friendlyName = "M2A3";
+                        }
+                    }
+                }
+                else { 
                 }
 
                 go.AddComponent<AlreadyConverted>();

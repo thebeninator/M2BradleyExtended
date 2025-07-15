@@ -63,9 +63,12 @@
   <ItemGroup>
     <Compile Include="Ammo.cs" />
     <Compile Include="Assets.cs" />
+    <Compile Include="CITV.cs" />
+    <Compile Include="IBAS.cs" />
     <Compile Include="M2Ext.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TrackingDimensions.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

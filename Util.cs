@@ -4,7 +4,7 @@ using System.Reflection;
 using GHPC;
 using GHPC.Equipment.Optics;
 using GHPC.Weapons;
-using Thermals;
+using GHPC.Thermals;
 using UnityEngine;
 
 namespace M2BradleyExtended
@@ -61,7 +61,6 @@ namespace M2BradleyExtended
             }
 
             HeatSource src = parent.AddComponent<HeatSource>();
-            src.FetchSwapableMats();
         }
 
         public static void ShallowCopy(System.Object dest, System.Object src)

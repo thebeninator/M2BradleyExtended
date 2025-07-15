@@ -23,17 +23,8 @@ namespace M2BradleyExtended
         public static Vehicle[] vics;
         public static MelonPreferences_Category cfg;
 
-        private GameObject game_manager;
-        public static AudioSettingsManager audio_settings_manager;
-        public static PlayerInput player_manager;
-        public static CameraManager camera_manager;
-
         internal IEnumerator GetVics(GameState _)
         {
-            game_manager = GameObject.Find("_APP_GHPC_");
-            audio_settings_manager = game_manager.GetComponent<AudioSettingsManager>();
-            player_manager = game_manager.GetComponent<PlayerInput>();
-            camera_manager = game_manager.GetComponent<CameraManager>();
             vics = GameObject.FindObjectsByType<Vehicle>(FindObjectsSortMode.None);
             yield break;
         }
@@ -50,6 +41,7 @@ namespace M2BradleyExtended
             {
                 Assets.Load();
                 Ammo.Init();
+                IBAS.Init();
             }
 
             if (Util.menu_screens.Contains(sceneName)) return;
