@@ -7,11 +7,14 @@ using GHPC.Weapons;
 using GHPC.Thermals;
 using UnityEngine;
 
-namespace M2BradleyExtended
+namespace ModUtil
 {
     public sealed class AlreadyConverted : MonoBehaviour
     {
-
+        void Awake() 
+        {
+            enabled = false;
+        }
     }
 
     public sealed class Util
@@ -52,7 +55,7 @@ namespace M2BradleyExtended
 
         public static void SetupFLIRShaders(GameObject parent)
         {
-            foreach (MeshRenderer mrend in parent.GetComponentsInChildren<MeshRenderer>(includeInactive: false))
+            foreach (MeshRenderer mrend in parent.GetComponentsInChildren<MeshRenderer>())
             {
                 foreach (Material mat in mrend.materials)
                 {
@@ -61,6 +64,7 @@ namespace M2BradleyExtended
             }
 
             HeatSource src = parent.AddComponent<HeatSource>();
+            src.heat = 5f;
         }
 
         public static void ShallowCopy(System.Object dest, System.Object src)

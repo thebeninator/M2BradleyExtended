@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using GHPC.State;
 using GHPC.Vehicle;
-using M2BradleyExtended;
 using GHPC.Utility;
 using MelonLoader;
 using GHPC.Weapons;
 using GHPC.Equipment.Optics;
+using GHPC.Thermals;
+using GHPC.Weaponry;
+using ModUtil;
 
 namespace M2BradleyExtended
 {
-    internal sealed class M2Ext
+    internal sealed class M2Ext : Module
     {
         static MelonPreferences_Entry<bool> m2_patch;
         static MelonPreferences_Entry<bool> m2a2_armour_package;
@@ -24,6 +22,7 @@ namespace M2BradleyExtended
         static MelonPreferences_Entry<bool> use_m919_apfsds;
         static MelonPreferences_Entry<string> tow_missile_type;
         static MelonPreferences_Entry<bool> has_enhanced_bushmaster;
+        static MelonPreferences_Entry<bool> use_xm913;
 
         static MelonPreferences_Entry<bool> has_lrf;
         static MelonPreferences_Entry<bool> has_ibas;
@@ -35,30 +34,33 @@ namespace M2BradleyExtended
             m2_patch = cfg.CreateEntry<bool>("M2 Bradley Patch", true);
 
             m2a2_armour_package = cfg.CreateEntry<bool>("Addon Armour Package", true);
-            m2a2_armour_package.Comment = "Addon 25.4mm steel plates for hull and turret";
-
-            //TODO
-            quickswap_bins = cfg.CreateEntry<bool>("Quick Refill Ammo Bins", true);
-            quickswap_bins.Comment = "Reduces time to replenish autocannon ammo bins to 15 seconds";
-
-            //TODO
-            has_enhanced_bushmaster = cfg.CreateEntry<bool>("Enhanced M242 Bushmaster", true);
-            has_enhanced_bushmaster.Comment = "Increased autocannon accuracy (plus cooler looking muzzle brake on M2A2 and beyond)";
+            m2a2_armour_package.Comment = "Addon 25.4mm steel plates for hull and turret. Increased weight.";
 
             use_m919_apfsds = cfg.CreateEntry<bool>("Use M919 APFSDS-T", true);
             use_m919_apfsds.Comment = "Increased penetration, velocity over M791 APDS-T";
+            use_m919_apfsds.Description = "//////////////////////////////////////////////////////////////";
 
             tow_missile_type = cfg.CreateEntry<string>("TOW Missile", "TOW2");
-            tow_missile_type.Comment = "Default, TOW2, TOW2A, TOW2B";
+            tow_missile_type.Comment = "Default, TOW2, TOW2A (anti-ERA)";
 
             has_lrf = cfg.CreateEntry<bool>("Has Laser Rangefinder", true);
-            has_lrf.Comment = "Does not have automatic lead";
+            has_lrf.Comment = "Does NOT have automatic lead";
+            has_lrf.Description = "//////////////////////////////////////////////////////////////";
 
             has_ibas = cfg.CreateEntry<bool>("Has IBAS", false);
-            has_ibas.Comment = "Complete overhaul for day and thermal sight; has automatic lead, autotracking, LRF";
+            has_ibas.Comment = "Complete overhaul for day and thermal sight; has automatic lead, includes LRF";
 
-            has_citv = cfg.CreateEntry<bool>("Has CITV", false);
-            has_citv.Comment = "Gives commander their own thermal optic; ";
+            has_enhanced_bushmaster = cfg.CreateEntry<bool>("Enhanced M242 Bushmaster", false);
+            has_enhanced_bushmaster.Comment = "Increases autocannon accuracy";
+
+            //use_xm913 = cfg.CreateEntry<bool>("50mm XM913 Autocannon", false);
+            //use_xm913.Comment = "Replaces the M242; features its own APFSDS and HEAB rounds";
+
+            quickswap_bins = cfg.CreateEntry<bool>("Quick Refill Ammo Bins", false);
+            quickswap_bins.Comment = "Reduces time to replenish autocannon ammo bins to 15 seconds";
+
+            //has_citv = cfg.CreateEntry<bool>("Has CITV", false);
+            //has_citv.Comment = "Gives commander their own thermal optic; ";
         }
 
         public static IEnumerator Convert(GameState _) {
@@ -88,8 +90,9 @@ namespace M2BradleyExtended
                 Transform night_hud = night_optic.transform.Find("M2 Bradley GPS canvas (1)/HUD elements");
                 Transform[] huds = new Transform[] { day_hud, night_hud };
 
-                string tow_type = tow_missile_type.Value.ToUpper();         
-                if (tow_type != null && tow_type != "DEFAULT") {
+                string tow_type = tow_missile_type.Value.ToUpper();
+                if (tow_type != null && tow_type != "DEFAULT")
+                {
                     GHPC.Weapons.AmmoRack tow_rack = tow_feed.ReadyRack;
                     AmmoType.AmmoClip tow_clip = Ammo.tow_missiles[tow_type].ClipType;
                     tow_rack.ClipTypes[0] = tow_clip;
@@ -106,21 +109,35 @@ namespace M2BradleyExtended
                     tow_feed.Start();
                 }
 
+                if (quickswap_bins.Value)
+                {
+                    GHPC.Weapons.AmmoRack main = loadout_manager.RackLoadouts[0].Rack;
+                    main._retrievalDelaySeconds = 10f;
+                    main._storageDelaySeconds = 5f;
+
+                    GHPC.Weapons.AmmoRack reserve = loadout_manager.RackLoadouts[1].Rack;
+                    reserve._retrievalDelaySeconds = 10f;
+                    reserve._storageDelaySeconds = 5f;
+                }
+
+                if (has_enhanced_bushmaster.Value /*&& !use_xm913.Value*/)
+                {
+                    bushmaster.BaseDeviationAngle = 0.065f / 2f;
+                    weapons_manager.Weapons[0].Name = "25mm cannon M242 enhanced";
+                }
+
                 if (has_ibas.Value)
                 {
-                    List<GameObject> temp_bushmaster_exclusive = bushmaster.ExclusiveItems.ToList();
-                    temp_bushmaster_exclusive.RemoveRange(0, 2);
-                    bushmaster.ExclusiveItems = temp_bushmaster_exclusive.ToArray();
-
-                    List<GameObject> temp_m240_exclusive = m240.ExclusiveItems.ToList();
-                    temp_m240_exclusive.RemoveRange(0, 2);
-                    m240.ExclusiveItems = temp_m240_exclusive.ToArray();
-
-                    IBAS.Add(day_optic, bushmaster.FCS);
+                    IBAS.Add(day_optic, bushmaster.FCS, bushmaster, tow, m240);
                     tow.GuidanceUnit.AimElement = day_optic.transform;
+
+                    CustomGuidanceComputer cgc = bushmaster.FCS.gameObject.AddComponent<CustomGuidanceComputer>();
+                    cgc.fcs = bushmaster.FCS;
+                    cgc.mgu = tow.GuidanceUnit;
                 }
-                
-                if (has_lrf.Value) {
+
+                if (has_lrf.Value || has_ibas.Value)
+                {
                     bushmaster.FCS.MaxLaserRange = 4000f;
 
                     day_optic.RangeTextArchetype = "0000";
@@ -137,18 +154,21 @@ namespace M2BradleyExtended
                     }
                 }
 
-                if (use_m919_apfsds.Value) {
+                if (use_m919_apfsds.Value /*&& !use_xm913.Value*/)
+                {
                     AmmoClipCodexScriptable ap_clip = is_ap_heavy ? Ammo.m919_230_clip_codex : Ammo.m919_70_clip_codex;
-                    loadout_manager.LoadedAmmoTypes[0] = Ammo.m919_50_clip_codex;
 
-                    GHPC.Weapons.AmmoRack rack = loadout_manager.RackLoadouts[0].Rack;
-                    loadout_manager.RackLoadouts[0].OverrideInitialClips[0] = ap_clip;
+                    LoadoutManager.RackLoadout primary_loadout = loadout_manager.RackLoadouts[0];
+                    primary_loadout.OverrideInitialClips[0] = ap_clip;
+                    GHPC.Weapons.AmmoRack rack = primary_loadout.Rack;
                     rack.ClipTypes[0] = ap_clip.ClipType;
                     Util.EmptyRack(rack);
 
                     GHPC.Weapons.AmmoRack reserve = loadout_manager.RackLoadouts[1].Rack;
                     reserve.ClipTypes[0] = Ammo.m919_50_clip_codex.ClipType;
                     Util.EmptyRack(reserve);
+
+                    loadout_manager.LoadedAmmoList.AmmoClips[0] = Ammo.m919_50_clip_codex;
 
                     loadout_manager.SpawnCurrentLoadout();
                     bushmaster.Feed.AmmoTypeInBreech = null;
@@ -160,7 +180,12 @@ namespace M2BradleyExtended
                     bushmaster_feed.ToggleExclusiveItems(ap_clip.ClipType);
                 }
 
-                if (m2a2_armour_package.Value) {
+                if (m2a2_armour_package.Value)
+                {
+                    vic.GetComponent<Rigidbody>().mass = 32600f;
+                    SkinnedMeshRenderer smr = rig.GetComponent<SkinnedMeshRenderer>();
+                    Mesh new_mesh = Assets.m2_bradley_smr_cleaned;
+
                     GameObject armour_kit = GameObject.Instantiate(Assets.m2a2_armour_kit, rig);
                     armour_kit.transform.localEulerAngles = new Vector3(0f, 90f, 90f);
 
@@ -170,6 +195,35 @@ namespace M2BradleyExtended
                     Transform turret_armour = armour_kit.transform.Find("armour/turret");
                     Transform mantlet_armour = turret_armour.Find("mantlet");
                     Transform hull_armour = armour_kit.transform.Find("armour/hull");
+
+                    if (!has_ibas.Value)
+                    {
+                        turret_visual.Find("ibas").gameObject.SetActive(false);
+                    }
+                    else
+                    {
+                        new_mesh = Assets.m2_bradley_smr_cleaned_ibas;
+                    }
+
+                    Transform brake = mantlet_visual.Find("enhanced brake");
+                    if (has_enhanced_bushmaster.Value /*! && use_xm913.Value*/)
+                    {
+                        brake.SetParent(vic.transform.Find("M2BRADLEY_rig/HULL/Turret/Mantlet/Main gun"), true);
+                        new_mesh = has_ibas.Value ? Assets.m2_bradley_smr_cleaned_enhanced_ibas : Assets.m2_bradley_smr_cleaned_enhanced;
+                    }
+                    else
+                    {
+                        brake.gameObject.SetActive(false);
+                    }
+
+                    //if (!use_xm913.Value)
+                    //{
+                    mantlet_visual.Find("xm913").gameObject.SetActive(false);
+                    //}
+
+                    smr.sharedMesh = new_mesh;
+
+                    armour_kit.GetComponent<HeatSource>().OnEnable();
 
                     turret_visual.SetParent(turret, true);
                     mantlet_visual.SetParent(mantlet, true);
@@ -210,12 +264,15 @@ namespace M2BradleyExtended
                     Transform original_turret_armour_lft = turret.GetComponent<LateFollowTarget>()._lateFollowers[0].transform;
                     Transform original_turret_armour = original_turret_armour_lft.GetChild(3);
                     original_turret_armour.Find("Turret Storage Basket Hard Steel 0.25\"").gameObject.SetActive(false);
-
-                    SkinnedMeshRenderer smr = rig.GetComponent<SkinnedMeshRenderer>();
-                    smr.sharedMesh = Assets.m2_bradley_smr_cleaned;
                 }
 
-                if (m2a2_armour_package.Value) {
+                if (tow_type != "DEFAULT")
+                {
+                    vic._friendlyName = "M2A1";
+                }
+
+                if (m2a2_armour_package.Value)
+                {
                     vic._friendlyName = "M2A2";
 
                     if (has_lrf.Value)
@@ -227,13 +284,14 @@ namespace M2BradleyExtended
                     {
                         vic._friendlyName = "M2A2 ODS-SA";
 
-                        if (has_citv.Value)
-                        {
-                            vic._friendlyName = "M2A3";
-                        }
+                        //if (has_citv.Value)
+                        //{
+                        //    vic._friendlyName = "M2A3";
+                        //}
                     }
                 }
-                else { 
+                else
+                {
                 }
 
                 go.AddComponent<AlreadyConverted>();

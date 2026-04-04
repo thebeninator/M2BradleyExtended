@@ -1,0 +1,72 @@
+
+                vic.GetComponent<Rigidbody>().mass = 15240f;
+
+                bushmaster.Impulse = 56000f;
+
+                List<WeaponSystemInfo> weapons = weapons_manager.Weapons.ToList<WeaponSystemInfo>();
+                weapons.RemoveAt(1);
+                (vic.InfoBroker._crewManager.GetCrewBrain(GHPC.Crew.CrewPosition.Gunner) as GHPC.Crew.GunnerBrain).WeaponsModule.Weapons.RemoveAt(1);
+
+                bushmaster.WeaponSound.SingleShotEventPaths[0] = "event:/Weapons/canon_105mm-L7";
+                bushmaster.transform.localPosition = new Vector3(0.0826f, 0.0085f, 1.75f);
+
+                weapons_manager.Weapons[0].Name = "152mm gun/launcher M81";
+                bushmaster.Feed.DualFeed = false;
+                bushmaster.UsesLoopingEffects = false;
+                bushmaster.UnfreezeRotationOnly = false;
+                bushmaster.UnfreezeDurationSeconds = 10f;
+                bushmaster.RecoilBlurMultiplier = 1f;
+
+                GameObject m81_muzzle_effects = GameObject.Instantiate(Assets.muzzle_flash_125, bushmaster.MuzzleIdentity);
+                m81_muzzle_effects.gameObject.SetActive(true);
+                bushmaster.MuzzleEffects[0].gameObject.SetActive(false);
+                bushmaster.MuzzleEffects[0] = m81_muzzle_effects.GetComponent<ParticleSystem>();
+                //m81_muzzle_effects.transform.Find("Muzzle Flash Front 2").gameObject.SetActive(false);
+                m81_muzzle_effects.transform.Find("Dust Kickup 1").gameObject.SetActive(false);
+                m81_muzzle_effects.transform.Find("Dust Kickup 2").gameObject.SetActive(false);
+
+                loadout_manager.LoadedAmmoTypes[0] = Ammo.m409a1_clip_codex;
+
+                GHPC.Weapons.AmmoRack rack = loadout_manager.RackLoadouts[0].Rack;
+                loadout_manager.RackLoadouts[0].OverrideInitialClips[0] = Ammo.m409a1_clip_codex;
+                rack.ClipTypes[0] = Ammo.m409a1_clip_codex.ClipType;
+                loadout_manager.TotalAmmoCounts[0] = 20;
+                Util.EmptyRack(rack);
+
+                GHPC.Weapons.AmmoRack reserve = loadout_manager.RackLoadouts[1].Rack;
+                Util.EmptyRack(reserve);
+
+                loadout_manager.SpawnCurrentLoadout();
+                bushmaster.Feed.AmmoTypeInBreech = null;
+                bushmaster.Feed.LoadedClipType = null;
+                bushmaster.Feed.Start();
+                loadout_manager.RegisterAllBallistics();
+
+                GameObject sheridan_kit = GameObject.Instantiate(Assets.m2_sheridan_kit, rig);
+                sheridan_kit.transform.localEulerAngles = new Vector3(0f, 90f, 90f);
+
+                Transform gun_visual = sheridan_kit.transform.Find("m81 gun");
+                gun_visual.SetParent(mantlet, true);
+                Transform barrel = gun_visual.transform.Find("barrel");
+                barrel.SetParent(vic.transform.Find("M2BRADLEY_rig/HULL/Turret/Mantlet/Main gun"), true);
+
+                turret.Find("Launcher Elevation").gameObject.SetActive(false);
+
+                Transform original_hull_armour_lft = go.GetComponent<LateFollowTarget>()._lateFollowers[0].transform;
+                Transform original_hull_armour = original_hull_armour_lft.GetChild(2);
+                original_hull_armour.Find("UnknownMaterialAndThickness (WT says Alu 1\")").gameObject.SetActive(false);
+                original_hull_armour.Find("Fording ramp Steel 0.25\"?").gameObject.SetActive(false);
+                Transform og_sides = original_hull_armour.Find("Hull Sides Alu 7039");
+                og_sides.GetComponent<MeshFilter>().sharedMesh = Assets.m2_bradley_hull_side_modified;
+                og_sides.GetComponent<MeshCollider>().sharedMesh = Assets.m2_bradley_hull_side_modified;
+
+                Transform og_sides_applique = original_hull_armour.Find("Hull Sides Hard Steel 0.25\"");
+                og_sides_applique.GetComponent<MeshFilter>().sharedMesh = Assets.m2_bradley_hull_side_applique_modified;
+                og_sides_applique.GetComponent<MeshCollider>().sharedMesh = Assets.m2_bradley_hull_side_applique_modified;
+
+                Transform original_turret_armour_lft = turret.GetComponent<LateFollowTarget>()._lateFollowers[0].transform;
+                Transform original_turret_armour = original_turret_armour_lft.GetChild(3);
+                original_turret_armour.Find("Turret Storage Basket Hard Steel 0.25\"").gameObject.SetActive(false);
+
+                SkinnedMeshRenderer smr = rig.GetComponent<SkinnedMeshRenderer>();
+                smr.sharedMesh = Assets.m2_bradley_smr_cleaned_sheridan;
