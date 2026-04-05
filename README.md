@@ -2,10 +2,11 @@ does NOT require the Vehicle Preloader
 
 adds stuff for the M2 Bradley. unfinished but playable
 
-M2A1: TOW-2/TOW-2A
-M2A2: Addon Armour Package
-M2A2 ODS: M2A2 + LRF
-M2A2 ODS-SA: M2A2 + IBAS
+Conversions:
+- M2A1: TOW-2/TOW-2A
+- M2A2: Addon Armour Package
+- M2A2 ODS: M2A2 + LRF
+- M2A2 ODS-SA: M2A2 + IBAS
 
 todo list:
 - CITV
