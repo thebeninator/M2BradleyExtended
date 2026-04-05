@@ -12,6 +12,8 @@ todo list:
 - IBAS autotracking
 - 50mm Bradley port
 
+<img width="699" height="175" alt="image" src="https://github.com/user-attachments/assets/c86888c5-77d8-4c61-a316-2faf3485f492" />
+
 <img width="978" height="555" alt="image" src="https://github.com/user-attachments/assets/8378cf5a-1040-424a-ba8c-5832f46f7dae" />
 
 ![image](https://github.com/user-attachments/assets/0588cbc4-4d4b-4e7a-8310-20840c78a098)
