@@ -4,19 +4,24 @@ using System.Reflection;
 using UnityEngine;
 using GHPC.Weaponry;
 using ModUtil;
+using GHPC.Effects;
+using MelonLoader;
 
 namespace M2BradleyExtended
 {
     internal sealed class Ammo
     {
+        private static AmmoType m919_ammo = new AmmoType();
         public static AmmoCodexScriptable m919_round_codex;
         public static AmmoClipCodexScriptable m919_70_clip_codex;
         public static AmmoClipCodexScriptable m919_50_clip_codex;
         public static AmmoClipCodexScriptable m919_230_clip_codex;
 
+        private static AmmoType tow2_ammo = new AmmoType();
         public static AmmoCodexScriptable tow2_round_codex;
         public static AmmoClipCodexScriptable tow2_clip_codex;
 
+        private static AmmoType tow2a_ammo = new AmmoType();
         public static AmmoCodexScriptable tow2a_round_codex;
         public static AmmoClipCodexScriptable tow2a_clip_codex;
 
@@ -101,7 +106,6 @@ namespace M2BradleyExtended
         }
 
         private static void TOW2() {
-            AmmoType tow2_ammo = new AmmoType();
             Util.ShallowCopy(tow2_ammo, Assets.itow_round_codex.AmmoType);
             tow2_ammo.CachedIndex = -1;
             tow2_ammo.RhaPenetration = 800f;
@@ -112,6 +116,8 @@ namespace M2BradleyExtended
             tow2_ammo.NoisePowerY = 30f;
             tow2_ammo.TurnSpeed = 0.18f;
             tow2_ammo.Name = "BGM-71D TOW-2";
+
+            if (tow2_round_codex != null) return;
 
             tow2_round_codex = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
             tow2_round_codex.AmmoType = tow2_ammo;
@@ -126,12 +132,13 @@ namespace M2BradleyExtended
             tow2_clip_codex.name = "tow2_clip";
             tow2_clip_codex.ClipType = tow2_clip;
 
+            Util.CacheAmmo(tow2_ammo);
+
             tow_missiles.Add("TOW2", tow2_clip_codex);
         }
 
         private static void TOW2A()
         {
-            AmmoType tow2a_ammo = new AmmoType();
             Util.ShallowCopy(tow2a_ammo, tow2_round_codex.AmmoType);
             tow2a_ammo.CachedIndex = -1;
             tow2a_ammo.TntEquivalentKg = 4.5f;
@@ -168,6 +175,8 @@ namespace M2BradleyExtended
                 };
             }
 
+            if (tow2a_round_codex != null) return;
+
             tow2a_round_codex = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
             tow2a_round_codex.AmmoType = tow2a_ammo;
             tow2a_round_codex.name = "tow2a_ammo";
@@ -181,11 +190,12 @@ namespace M2BradleyExtended
             tow2a_clip_codex.name = "tow2a_clip";
             tow2a_clip_codex.ClipType = tow2a_clip;
 
+            Util.CacheAmmo(tow2a_ammo);
+
             tow_missiles.Add("TOW2A", tow2a_clip_codex);
         }
 
         private static void M919() {
-            AmmoType m919_ammo = new AmmoType();
             Util.ShallowCopy(m919_ammo, Assets.m791_round_codex.AmmoType);
             m919_ammo.CachedIndex = -1;
             m919_ammo.RhaPenetration = 105f;
@@ -194,6 +204,8 @@ namespace M2BradleyExtended
             m919_ammo.MaximumRange = 2500f;
             m919_ammo.Coeff = 0.008f;
             m919_ammo.Name = "25mm APFSDS-T M919";
+
+            if (m919_round_codex != null) return;
 
             m919_round_codex = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
             m919_round_codex.AmmoType = m919_ammo;
@@ -225,6 +237,9 @@ namespace M2BradleyExtended
             m919_230_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
             m919_230_clip_codex.name = "clip_230";
             m919_230_clip_codex.ClipType = clip_230;
+
+            Util.CacheAmmo(m919_ammo);
+
         }
 
         private static void XM1203()

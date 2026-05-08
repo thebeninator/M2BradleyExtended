@@ -83,6 +83,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="ModUtil\AssetUtil.cs" />
     <Compile Include="ModUtil\Module.cs" />
+    <Compile Include="ModUtil\ModuleManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TrackingDimensions.cs" />
     <Compile Include="ModUtil\Util.cs" />

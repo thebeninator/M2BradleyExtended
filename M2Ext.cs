@@ -129,11 +129,12 @@ namespace M2BradleyExtended
                 if (has_ibas.Value)
                 {
                     IBAS.Add(day_optic, bushmaster.FCS, bushmaster, tow, m240);
-                    tow.GuidanceUnit.AimElement = day_optic.transform;
+                    weapons_manager.Weapons[1].MuzzleAngleOffset = Vector3.zero;
 
-                    CustomGuidanceComputer cgc = bushmaster.FCS.gameObject.AddComponent<CustomGuidanceComputer>();
-                    cgc.fcs = bushmaster.FCS;
-                    cgc.mgu = tow.GuidanceUnit;
+                    //CustomGuidanceComputer cgc = bushmaster.FCS.gameObject.AddComponent<CustomGuidanceComputer>();
+                    //cgc.fcs = bushmaster.FCS;
+                    //cgc.mgu = tow.GuidanceUnit;
+                    tow.GuidanceUnit.AimElement = turret.Find("GPS reference transform");
                 }
 
                 if (has_lrf.Value || has_ibas.Value)

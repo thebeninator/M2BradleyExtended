@@ -6,6 +6,9 @@ using GHPC.Equipment.Optics;
 using GHPC.Weapons;
 using GHPC.Thermals;
 using UnityEngine;
+using GHPC.Effects;
+using M2BradleyExtended;
+using MelonLoader;
 
 namespace ModUtil
 {
@@ -19,6 +22,8 @@ namespace ModUtil
 
     public sealed class Util
     {
+        public static ImpactEffectsDatabaseScriptable impact_fx_db;
+
         public static string[] menu_screens = new string[] {
             "MainMenu2_Scene",
             "MainMenu2-1_Scene",
@@ -26,6 +31,19 @@ namespace ModUtil
             "LOADER_INITIAL",
             "t64_menu"
         };
+
+        public static void CacheAmmo(AmmoType ammo)
+        {
+            if (impact_fx_db == null)
+            {
+                impact_fx_db = Resources.FindObjectsOfTypeAll<ImpactEffectsDatabaseScriptable>()[0];
+            }
+
+            int id;
+            ImpactDecalsManager.Instance._ImpactDecalsScriptable.CacheNewData(ammo, out id);
+            impact_fx_db.CacheNewData(ammo, out id);
+            ammo.CachedIndex = id;
+        }
 
         public static void CreateUniformArmour(GameObject go, string name, float rha_sabot, float rha_heat, ArmorCodexScriptable codex = null) {
             UniformArmor component = go.AddComponent<UniformArmor>();
@@ -53,6 +71,12 @@ namespace ModUtil
             return values.ToArray();
         }
 
+        public static void Coalesce<T>(ref T obj) where T : new()
+        {
+            if (obj != null) return;
+            obj = new T();
+        }
+
         public static void SetupFLIRShaders(GameObject parent)
         {
             foreach (MeshRenderer mrend in parent.GetComponentsInChildren<MeshRenderer>())
@@ -64,7 +88,7 @@ namespace ModUtil
             }
 
             HeatSource src = parent.AddComponent<HeatSource>();
-            src.heat = 5f;
+            src.heat = 0.4f;
         }
 
         public static void ShallowCopy(System.Object dest, System.Object src)

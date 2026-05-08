@@ -48,6 +48,8 @@ namespace M2BradleyExtended
 
         public override void LoadStaticAssets()
         {
+            IBAS.Init();
+
             //m791_70_clip_codex = Resources.FindObjectsOfTypeAll<AmmoClipCodexScriptable>().Where(o => o.name == "clip_M791_70rd_load").First();
             //m791_50_clip_codex = Resources.FindObjectsOfTypeAll<AmmoClipCodexScriptable>().Where(o => o.name == "clip_M791_50rd_box").First();
             //m791_230_clip_codex = Resources.FindObjectsOfTypeAll<AmmoClipCodexScriptable>().Where(o => o.name == "clip_M791_230rd_load").First();
@@ -116,14 +118,10 @@ namespace M2BradleyExtended
         {
             if (AssetUtil.VehicleInMission("M2 Bradley") || AssetUtil.VehicleInMission("M2 Bradley(AP heavy belt temp) Variant")) 
             {
-                if (m791_round_codex == null)
-                {
-                    AssetUtil.LoadVanillaVehicle("M2BRADLEY"); // force load the codices immediately
-                    m791_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_25mm_M791_APDS").First();
-                    itow_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_I-TOW").First();
-                    Ammo.Init();
-                    IBAS.Init();
-                }
+                AssetUtil.LoadVanillaVehicle("M2BRADLEY"); // force load the codices immediately
+                m791_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_25mm_M791_APDS").First();
+                itow_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_I-TOW").First();
+                Ammo.Init();
 
                 Vehicle m60a3 = AssetUtil.LoadVanillaVehicle("M60A3TTS");
                 flir_blit_mat_green = m60a3.transform.Find("Turret Scripts/Sights/FLIR").GetComponent<CameraSlot>().FLIRBlitMaterialOverride;
