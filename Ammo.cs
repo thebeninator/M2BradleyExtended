@@ -116,6 +116,7 @@ namespace M2BradleyExtended
             tow2_ammo.NoisePowerY = 30f;
             tow2_ammo.TurnSpeed = 0.18f;
             tow2_ammo.Name = "BGM-71D TOW-2";
+            Util.CacheAmmo(tow2_ammo);
 
             if (tow2_round_codex != null) return;
 
@@ -132,8 +133,6 @@ namespace M2BradleyExtended
             tow2_clip_codex.name = "tow2_clip";
             tow2_clip_codex.ClipType = tow2_clip;
 
-            Util.CacheAmmo(tow2_ammo);
-
             tow_missiles.Add("TOW2", tow2_clip_codex);
         }
 
@@ -143,6 +142,7 @@ namespace M2BradleyExtended
             tow2a_ammo.CachedIndex = -1;
             tow2a_ammo.TntEquivalentKg = 4.5f;
             tow2a_ammo.Name = "BGM-71E TOW-2A";
+            Util.CacheAmmo(tow2a_ammo);
 
             string era_schema = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.EraSchema");
             string k1 = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.Kontakt1");
@@ -190,8 +190,6 @@ namespace M2BradleyExtended
             tow2a_clip_codex.name = "tow2a_clip";
             tow2a_clip_codex.ClipType = tow2a_clip;
 
-            Util.CacheAmmo(tow2a_ammo);
-
             tow_missiles.Add("TOW2A", tow2a_clip_codex);
         }
 
@@ -204,6 +202,7 @@ namespace M2BradleyExtended
             m919_ammo.MaximumRange = 2500f;
             m919_ammo.Coeff = 0.008f;
             m919_ammo.Name = "25mm APFSDS-T M919";
+            Util.CacheAmmo(m919_ammo);
 
             if (m919_round_codex != null) return;
 
@@ -237,9 +236,6 @@ namespace M2BradleyExtended
             m919_230_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
             m919_230_clip_codex.name = "clip_230";
             m919_230_clip_codex.ClipType = clip_230;
-
-            Util.CacheAmmo(m919_ammo);
-
         }
 
         private static void XM1203()

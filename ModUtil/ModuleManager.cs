@@ -41,7 +41,7 @@ namespace ModUtil
 
                 if (loaded)
                 {
-                    MelonLogger.Msg("M60BFG dynamic assets loaded from module: " + id);
+                    MelonLogger.Msg(mod_id + " dynamic assets loaded from module: " + id);
                 }
             }
         }
@@ -55,7 +55,7 @@ namespace ModUtil
 
                 if (static_loaded)
                 {
-                    MelonLogger.Msg("M60BFG static assets loaded from module: " + id);
+                    MelonLogger.Msg(mod_id + " static assets loaded from module: " + id);
                 }
             }
         }
