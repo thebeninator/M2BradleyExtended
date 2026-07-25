@@ -10,6 +10,7 @@ using GHPC.Equipment.Optics;
 using GHPC.Thermals;
 using GHPC.Weaponry;
 using ModUtil;
+using M2BradleyExtended.FNF;
 
 namespace M2BradleyExtended
 {
@@ -90,25 +91,6 @@ namespace M2BradleyExtended
                 Transform night_hud = night_optic.transform.Find("M2 Bradley GPS canvas (1)/HUD elements");
                 Transform[] huds = new Transform[] { day_hud, night_hud };
 
-                string tow_type = tow_missile_type.Value.ToUpper();
-                if (tow_type != null && tow_type != "DEFAULT")
-                {
-                    GHPC.Weapons.AmmoRack tow_rack = tow_feed.ReadyRack;
-                    AmmoType.AmmoClip tow_clip = Ammo.tow_missiles[tow_type].ClipType;
-                    tow_rack.ClipTypes[0] = tow_clip;
-                    tow_rack.StoredClips = new List<AmmoType.AmmoClip>()
-                    {
-                        tow_clip,
-                        tow_clip,
-                        tow_clip,
-                        tow_clip,
-                        tow_clip
-                    };
-
-                    tow_feed.AmmoTypeInBreech = null;
-                    tow_feed.Start();
-                }
-
                 if (quickswap_bins.Value)
                 {
                     GHPC.Weapons.AmmoRack main = loadout_manager.RackLoadouts[0].Rack;
@@ -134,6 +116,7 @@ namespace M2BradleyExtended
                     //CustomGuidanceComputer cgc = bushmaster.FCS.gameObject.AddComponent<CustomGuidanceComputer>();
                     //cgc.fcs = bushmaster.FCS;
                     //cgc.mgu = tow.GuidanceUnit;
+
                     tow.GuidanceUnit.AimElement = turret.Find("GPS reference transform");
                 }
 
@@ -229,26 +212,10 @@ namespace M2BradleyExtended
                     turret_visual.SetParent(turret, true);
                     mantlet_visual.SetParent(mantlet, true);
 
-                    turret_armour.SetParent(turret, true);
-                    mantlet_armour.SetParent(mantlet, true);
-
-                    LateFollow turret_armour_lf = turret_armour.gameObject.AddComponent<LateFollow>();
-                    turret_armour_lf.FollowTarget = turret;
-                    turret_armour_lf.ForceToRoot = true;
-                    turret_armour_lf.enabled = true;
-                    turret_armour_lf.Awake();
-
-                    LateFollow mantlet_armour_lf = mantlet_armour.gameObject.AddComponent<LateFollow>();
-                    mantlet_armour_lf.FollowTarget = turret;
-                    mantlet_armour_lf.ForceToRoot = true;
-                    mantlet_armour_lf.enabled = true;
-                    mantlet_armour_lf.Awake();
-
-                    LateFollow hull_armour_lf = hull_armour.gameObject.AddComponent<LateFollow>();
-                    hull_armour_lf.FollowTarget = vic.transform;
-                    hull_armour_lf.ForceToRoot = true;
-                    hull_armour_lf.enabled = true;
-                    hull_armour_lf.Awake();
+                    turret_armour.SetParent(turret.GetComponent<LateFollowTarget>().LateFollowers[0].transform, true);
+                    mantlet_armour.SetParent(mantlet.GetComponent<LateFollowTarget>().LateFollowers[0].transform, true);
+                    hull_armour.SetParent(vic.GetComponent<LateFollowTarget>().LateFollowers[0].transform, true);
+                    GameObject.Destroy(armour_kit.transform.Find("armour").gameObject);
 
                     Transform original_hull_armour_lft = go.GetComponent<LateFollowTarget>()._lateFollowers[0].transform;
                     Transform original_hull_armour = original_hull_armour_lft.GetChild(2);
@@ -265,6 +232,37 @@ namespace M2BradleyExtended
                     Transform original_turret_armour_lft = turret.GetComponent<LateFollowTarget>()._lateFollowers[0].transform;
                     Transform original_turret_armour = original_turret_armour_lft.GetChild(3);
                     original_turret_armour.Find("Turret Storage Basket Hard Steel 0.25\"").gameObject.SetActive(false);
+                }
+
+                string tow_type = tow_missile_type.Value.ToUpper();
+                if (tow_type != null && tow_type != "DEFAULT")
+                {
+                    GHPC.Weapons.AmmoRack tow_rack = tow_feed.ReadyRack;
+                    AmmoType.AmmoClip tow_clip = Ammo.tow_missiles[tow_type].ClipType;
+                    tow_rack.ClipTypes[0] = tow_clip;
+                    tow_rack.StoredClips = new List<AmmoType.AmmoClip>()
+                    {
+                        tow_clip,
+                        tow_clip,
+                        tow_clip,
+                        tow_clip,
+                        tow_clip
+                    };
+
+                    if (tow_type == "TOWFF")
+                    {
+                        tow.GuidanceUnit.GuidanceStarted -= tow.GuidanceUnit.OnGuidanceStarted;
+                        tow.GuidanceUnit.GuidanceStopped -= tow.GuidanceUnit.OnGuidanceStopped;
+                        //tow.GuidanceUnit = null;
+                        tow.WireGuided = false;
+                        //tow.Feed._missileGuidance = null;
+                        tow.Feed.ReloadDuringMissileTracking = true;
+                        tow.TriggerHoldTime = 0.5f;
+                        Javelin.Add(day_optic, bushmaster.FCS, bushmaster, tow, has_ibas.Value);
+                    }
+
+                    tow_feed.AmmoTypeInBreech = null;
+                    tow_feed.Start();
                 }
 
                 if (tow_type != "DEFAULT")

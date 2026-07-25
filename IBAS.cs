@@ -5,6 +5,7 @@ using GHPC.Weapons;
 using Reticle;
 using UnityEngine;
 using ModUtil;
+using M2BradleyExtended.FNF;
 
 namespace M2BradleyExtended
 {
@@ -93,16 +94,20 @@ namespace M2BradleyExtended
             night_optic.reticleMesh.Load();
             night_optic.RotateAzimuth = true;
             night_optic.RangeText = ibas_hud.transform.Find("range").GetComponent<TMPro.TextMeshProUGUI>();
-            night_optic.FovLimitedItems = new UsableOptic.FovLimitedItem[] {
-                new UsableOptic.FovLimitedItem() {
+            night_optic.FovLimitedItems = new UsableOptic.FovLimitedItem[] 
+            {
+                new UsableOptic.FovLimitedItem() 
+                {
                     FovRange = new Vector2(7f, 8f),
                     ExclusiveObjects = new GameObject[] { ibas_hud.transform.Find("zoom level (2x)").gameObject }
                 },
-                new UsableOptic.FovLimitedItem() {
+                new UsableOptic.FovLimitedItem() 
+                {
                     FovRange = new Vector2(1f, 3f),
                     ExclusiveObjects = new GameObject[] { ibas_hud.transform.Find("zoom level (4x)").gameObject }
                 },
             };
+
             night_optic.Alignment = OpticAlignment.BoresightStabilized;
             night_optic.ReadyToFireObject = ibas_hud.transform.Find("ammo/ready box").gameObject;
             night_optic.slot.VibrationShakeMultiplier = 0f;
@@ -120,14 +125,20 @@ namespace M2BradleyExtended
 
             List<GameObject> temp_bushmaster_exclusive = bushmaster.ExclusiveItems.ToList();
             temp_bushmaster_exclusive.RemoveRange(0, 2);
+            temp_bushmaster_exclusive.Add(ibas_hud);
+            temp_bushmaster_exclusive.Add(night_optic.reticleMesh.gameObject);
             bushmaster.ExclusiveItems = temp_bushmaster_exclusive.ToArray();
 
             List<GameObject> temp_tow_exclusive = tow.ExclusiveItems.ToList();
             temp_tow_exclusive.RemoveAt(0);
+            temp_tow_exclusive.Add(ibas_hud);
+            temp_tow_exclusive.Add(night_optic.reticleMesh.gameObject);
             tow.ExclusiveItems = temp_tow_exclusive.ToArray();
 
             List<GameObject> temp_m240_exclusive = m240.ExclusiveItems.ToList();
             temp_m240_exclusive.RemoveRange(0, 2);
+            temp_m240_exclusive.Add(ibas_hud);
+            temp_m240_exclusive.Add(night_optic.reticleMesh.gameObject);
             m240.ExclusiveItems = temp_m240_exclusive.ToArray();
 
             bushmaster.ExclusiveItems[1] = ibas_hud.transform.Find("ammo/bushmaster").gameObject;
@@ -141,8 +152,10 @@ namespace M2BradleyExtended
             day_reticleSO = new ReticleSO();
             day_reticleSO.name = "IBAS-DAY";
 
-            day_reticleSO.lights = new List<ReticleTree.Light>() {
-                new ReticleTree.Light() { 
+            day_reticleSO.lights = new List<ReticleTree.Light>() 
+            {
+                new ReticleTree.Light() 
+                { 
                     type = ReticleTree.Light.Type.Powered,
                     color = new RGB(3.2f, 0f, 0f, true)
                 }
@@ -154,7 +167,8 @@ namespace M2BradleyExtended
             ffp.elements = ffp_elements;
             planes.Add(ffp);
 
-            ReticleTree.Angular angular_root = new ReticleTree.Angular(
+            ReticleTree.Angular angular_root = new ReticleTree.Angular
+            (
                 position: Vector2.zero,
                 parent: null,
                 align: ReticleTree.GroupBase.Alignment.Impact
@@ -163,7 +177,8 @@ namespace M2BradleyExtended
             List<ReticleTree.TransformElement> root_elements = angular_root.elements;
             ffp_elements.Add(angular_root);
 
-            ReticleTree.Line dot = new ReticleTree.Line(
+            ReticleTree.Line dot = new ReticleTree.Line
+            (
                 position: new AngularVector2(new Vector2(0f, 0f), unit: AngularLength.AngularUnit.MIL_NATO),
                 degrees: 0f,
                 length: thickness,
@@ -173,8 +188,10 @@ namespace M2BradleyExtended
             dot.visualType = ReticleTree.VisualElement.Type.ReflectedAdditive;
             dot.illumination = ReticleTree.Light.Type.Powered;
 
-            foreach (IBASLine IBAS_line in lines) {
-                ReticleTree.Line line = new ReticleTree.Line(
+            foreach (IBASLine IBAS_line in lines) 
+            {
+                ReticleTree.Line line = new ReticleTree.Line
+                (
                     position: IBAS_line.position,
                     length: IBAS_line.length,
                     degrees: 0f,
@@ -195,8 +212,10 @@ namespace M2BradleyExtended
             Util.ShallowCopy(night_reticleSO, day_reticleSO);
             night_reticleSO.name = "IBAS-FLIR";
 
-            night_reticleSO.lights = new List<ReticleTree.Light>() {
-                new ReticleTree.Light() {
+            night_reticleSO.lights = new List<ReticleTree.Light>() 
+            {
+                new ReticleTree.Light() 
+                {
                     type = ReticleTree.Light.Type.Powered,
                     color = new RGB(0, 3.2f, 0f, true)
                 }
@@ -212,7 +231,8 @@ namespace M2BradleyExtended
             ffp.elements = ffp_elements;
             planes.Add(ffp);
 
-            ReticleTree.Angular angular_root = new ReticleTree.Angular(
+            ReticleTree.Angular angular_root = new ReticleTree.Angular
+            (
                 position: Vector2.zero,
                 parent: null,
                 align: ReticleTree.GroupBase.Alignment.Impact
@@ -221,7 +241,8 @@ namespace M2BradleyExtended
             List<ReticleTree.TransformElement> root_elements = angular_root.elements;
             ffp_elements.Add(angular_root);
 
-            ReticleTree.Line line = new ReticleTree.Line(
+            ReticleTree.Line line = new ReticleTree.Line
+            (
                 position: Vector2.zero,
                 length: 4.36f,
                 degrees: 0f,

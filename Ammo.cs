@@ -25,6 +25,14 @@ namespace M2BradleyExtended
         public static AmmoCodexScriptable tow2a_round_codex;
         public static AmmoClipCodexScriptable tow2a_clip_codex;
 
+        private static AmmoType towff_ammo = new AmmoType();
+        public static AmmoCodexScriptable towff_round_codex;
+        public static AmmoClipCodexScriptable towff_clip_codex;
+
+        private static AmmoType towff_dir_ammo = new AmmoType();
+        public static AmmoCodexScriptable towff_dir_round_codex;
+        public static AmmoClipCodexScriptable towff_dir_clip_codex;
+
         public static AmmoCodexScriptable tow2b_round_codex;
         public static AmmoClipCodexScriptable tow2b_clip_codex;
 
@@ -45,6 +53,7 @@ namespace M2BradleyExtended
             M919();
             TOW2();
             TOW2A();
+            TOWFF();
             //M409A1();
             //MGM51B();
         }
@@ -116,6 +125,7 @@ namespace M2BradleyExtended
             tow2_ammo.NoisePowerY = 30f;
             tow2_ammo.TurnSpeed = 0.18f;
             tow2_ammo.Name = "BGM-71D TOW-2";
+            tow2_ammo.NoLeadCompensation = true;
             Util.CacheAmmo(tow2_ammo);
 
             if (tow2_round_codex != null) return;
@@ -142,6 +152,7 @@ namespace M2BradleyExtended
             tow2a_ammo.CachedIndex = -1;
             tow2a_ammo.TntEquivalentKg = 4.5f;
             tow2a_ammo.Name = "BGM-71E TOW-2A";
+            tow2a_ammo.NoLeadCompensation = true;
             Util.CacheAmmo(tow2a_ammo);
 
             string era_schema = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.EraSchema");
@@ -159,16 +170,20 @@ namespace M2BradleyExtended
                 FieldInfo era_schema_so = era_schema_type.GetField("era_so", BindingFlags.Public | BindingFlags.Instance);
                 Func<Type, ArmorCodexScriptable> get_codex = type => (ArmorCodexScriptable)era_schema_so.GetValue(type.GetField("schema", flags).GetValue(null));
 
-                tow2a_ammo.ArmorOptimizations = new AmmoType.ArmorOptimization[] {
-                    new AmmoType.ArmorOptimization() {
+                tow2a_ammo.ArmorOptimizations = new AmmoType.ArmorOptimization[] 
+                {
+                    new AmmoType.ArmorOptimization() 
+                    {
                         Armor = get_codex(relikt_type),
                         RhaRatio = 0.10f
                     },
-                    new AmmoType.ArmorOptimization() {
+                    new AmmoType.ArmorOptimization() 
+                    {
                         Armor = get_codex(k5_type),
                         RhaRatio = 0.05f
                     },
-                    new AmmoType.ArmorOptimization() {
+                    new AmmoType.ArmorOptimization() 
+                    {
                         Armor = get_codex(k1_type),
                         RhaRatio = 0.05f
                     }
@@ -191,6 +206,104 @@ namespace M2BradleyExtended
             tow2a_clip_codex.ClipType = tow2a_clip;
 
             tow_missiles.Add("TOW2A", tow2a_clip_codex);
+        }
+
+        private static void TOWFF()
+        {
+            Util.ShallowCopy(towff_ammo, tow2_round_codex.AmmoType);
+            towff_ammo.RhaPenetration = 700f;
+            towff_ammo.CachedIndex = -1;
+            towff_ammo.TntEquivalentKg = 4.5f;
+            towff_ammo.Name = "BGM-148A Super Javelin";
+            towff_ammo.Guidance = AmmoType.GuidanceType.Laser;
+            towff_ammo.Flight = AmmoType.FlightPattern.TopAttack;
+            towff_ammo.ClimbAngle = 20f;
+            towff_ammo.TurnSpeed = 2.5f;
+            towff_ammo.DiveAngle = 45f;
+            towff_ammo.LoiterAltitude = 220f;
+            towff_ammo.Coeff = 0.15f;
+            towff_ammo.AimPointMarch = 0.15f;
+            towff_ammo.RangedFuseTime = 25f;
+            towff_ammo.NoisePowerX = 0f;
+            towff_ammo.NoisePowerY = 0f;
+            towff_ammo.NoiseTimeScale = 1f;
+
+            Util.CacheAmmo(towff_ammo);
+
+            string era_schema = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.EraSchema");
+            string k1 = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.Kontakt1");
+            string k5 = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.Kontakt5");
+            string relikt = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.Relikt");
+            Type era_schema_type = Type.GetType(era_schema);
+            Type k1_type = Type.GetType(k1);
+            Type k5_type = Type.GetType(k5);
+            Type relikt_type = Type.GetType(relikt);
+
+            if (k1_type != null)
+            {
+                BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
+                FieldInfo era_schema_so = era_schema_type.GetField("era_so", BindingFlags.Public | BindingFlags.Instance);
+                Func<Type, ArmorCodexScriptable> get_codex = type => (ArmorCodexScriptable)era_schema_so.GetValue(type.GetField("schema", flags).GetValue(null));
+
+                towff_ammo.ArmorOptimizations = new AmmoType.ArmorOptimization[] 
+                {
+                    new AmmoType.ArmorOptimization() 
+                    {
+                        Armor = get_codex(relikt_type),
+                        RhaRatio = 0.10f
+                    },
+                    new AmmoType.ArmorOptimization() 
+                    {
+                        Armor = get_codex(k5_type),
+                        RhaRatio = 0.05f
+                    },
+                    new AmmoType.ArmorOptimization() 
+                    {
+                        Armor = get_codex(k1_type),
+                        RhaRatio = 0.05f
+                    }
+                };
+            }
+
+            Util.ShallowCopy(towff_dir_ammo, towff_ammo);
+            towff_dir_ammo.CachedIndex = -1;
+            towff_dir_ammo.ClimbAngle = 18f;
+            towff_dir_ammo.DiveAngle = 75f;
+            towff_dir_ammo.Flight = AmmoType.FlightPattern.Hump;
+            towff_dir_ammo.LoiterAltitude = 60f;
+            towff_dir_ammo.LoiterEndDistance = 100f;
+            towff_dir_ammo.AimPointMarch = 0f;
+            Util.CacheAmmo(towff_dir_ammo);
+
+            if (towff_round_codex != null) return;
+
+            towff_round_codex = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
+            towff_round_codex.AmmoType = towff_ammo;
+            towff_round_codex.name = "towff_ammo";
+
+            AmmoType.AmmoClip towff_clip = new AmmoType.AmmoClip();
+            towff_clip.Capacity = 50;
+            towff_clip.Name = "BGM-148A Super Javelin";
+            towff_clip.MinimalPattern = new AmmoCodexScriptable[1];
+            towff_clip.MinimalPattern[0] = towff_round_codex;
+            towff_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
+            towff_clip_codex.name = "towff_clip";
+            towff_clip_codex.ClipType = towff_clip;
+
+            towff_dir_round_codex = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
+            towff_dir_round_codex.AmmoType = towff_dir_ammo;
+            towff_dir_round_codex.name = "towff_dir_ammo";
+
+            AmmoType.AmmoClip towff_dir_clip = new AmmoType.AmmoClip();
+            towff_dir_clip.Capacity = 50;
+            towff_dir_clip.Name = "BGM-148A Super Javelin";
+            towff_dir_clip.MinimalPattern = new AmmoCodexScriptable[1];
+            towff_dir_clip.MinimalPattern[0] = towff_dir_round_codex;
+            towff_dir_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
+            towff_dir_clip_codex.name = "towff_dir_clip";
+            towff_dir_clip_codex.ClipType = towff_dir_clip;
+
+            tow_missiles.Add("TOWFF", towff_clip_codex);
         }
 
         private static void M919() {

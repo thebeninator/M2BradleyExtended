@@ -26,6 +26,9 @@ namespace M2BradleyExtended
         public static GameObject ibas_hud;
         public static TMPro.TMP_FontAsset ibas_font;
 
+        public static GameObject javelin_hud;
+        public static GameObject javelin_mode_hud;
+
         public static ArmorCodexScriptable US_generic_hhs;
 
         public static AmmoCodexScriptable m791_round_codex;
@@ -45,6 +48,7 @@ namespace M2BradleyExtended
 
         public static AssetBundle m2_extended_assets;
         public static AssetBundle sheridan_kit_assets;
+        public static AssetBundle towff_assets;
 
         public override void LoadStaticAssets()
         {
@@ -65,6 +69,7 @@ namespace M2BradleyExtended
 
             m2_extended_assets = AssetBundle.LoadFromFile(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended", "m2assets"));
             sheridan_kit_assets = AssetBundle.LoadFromFile(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended", "sheridan_kit"));
+            towff_assets = AssetBundle.LoadFromFile(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended", "towff"));
 
             m2_bradley_smr_cleaned = m2_extended_assets.LoadAsset<Mesh>("m2_smr_clean.asset");
             m2_bradley_smr_cleaned_enhanced = m2_extended_assets.LoadAsset<Mesh>("m2_smr_clean_enhanced.asset");
@@ -112,6 +117,9 @@ namespace M2BradleyExtended
             hhs.SpallPowerMultiplier = 1f;
             hhs.ThicknessSource = ArmorType.RhaSource.BHN;
             US_generic_hhs.ArmorType = hhs;
+
+            javelin_hud = towff_assets.LoadAsset<GameObject>("javelin hud");
+            javelin_mode_hud = towff_assets.LoadAsset<GameObject>("javelin mode hud");
         }
 
         public override void LoadDynamicAssets()
@@ -129,6 +137,16 @@ namespace M2BradleyExtended
                 ibas_font = Resources.FindObjectsOfTypeAll<TMPro.TMP_FontAsset>().Where(o => o.name == "VCR_OSD_MONO_1 green").First();
 
                 foreach (TMPro.TextMeshProUGUI text in ibas_hud.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true))
+                {
+                    text.font = ibas_font;
+                }
+
+                foreach (TMPro.TextMeshProUGUI text in javelin_hud.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true))
+                {
+                    text.font = ibas_font;
+                }
+
+                foreach (TMPro.TextMeshProUGUI text in javelin_mode_hud.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true))
                 {
                     text.font = ibas_font;
                 }
