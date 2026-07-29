@@ -34,8 +34,6 @@ namespace M2BradleyExtended.FNF
         {
             if (target == null && (!point_target.HasValue && point_targeting)) return;
 
-            Vector3 pos = Vector3.zero;
-
             if (tracking_object == null && !point_targeting)
             {
                 bool is_helo = target.Type == GHPC.UnitType.AirVehicle;
@@ -56,14 +54,9 @@ namespace M2BradleyExtended.FNF
                     MelonLogger.Msg("failed to get transform center, defaulting to tracking obj");
                     tracking_object = target.transform.Find("TRACKING OBJECT");
                 }
-
-                pos = tracking_object.position;
             }
 
-            if (point_targeting)
-            {
-                pos = point_target.Value;
-            }
+            Vector3 pos = point_targeting ? point_target.Value : tracking_object.transform.position;
 
             Vector3 actual_offset = point_targeting ? Vector3.zero : offset;
 

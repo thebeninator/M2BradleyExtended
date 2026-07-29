@@ -1,4 +1,5 @@
 ﻿using GHPC.Weapons;
+using UnityEngine;
 
 namespace M2BradleyExtended.Airburst
 {
@@ -13,7 +14,8 @@ namespace M2BradleyExtended.Airburst
             if (ammo_type.CachedIndex != manager.AirburstAmmo.CachedIndex) return;
 
             float range = weapon_system.FCS.CurrentRange;
-            float flight_time = BallisticComputerRepository._instance.GetFlightTime(ammo_type, range);
+            float muzzle_offset = Vector3.Distance(weapon_system.MuzzleIdentity.position, weapon_system.FCS.ReferenceTransform.position);
+            float flight_time = BallisticComputerRepository._instance.GetFlightTime(ammo_type, range + muzzle_offset + 2f);
             round._rangedFuseActive = true;
             round._fusedStatus = GHPC.Effects.ParticleEffectsManager.FusedStatus.Fuzed;
             round._rangedFuseCountdown = flight_time;

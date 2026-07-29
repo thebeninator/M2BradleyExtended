@@ -8,6 +8,7 @@ using GHPC;
 using GHPC.PhysicsHelpers;
 using GHPC.Player;
 using GHPC.AI;
+using GHPC.Utility;
 
 namespace M2BradleyExtended.FNF
 {
@@ -22,16 +23,19 @@ namespace M2BradleyExtended.FNF
         private float seek_cd = 0f;
         private int self;
 
+        public AmmoType ammo_dir;
         public Vehicle target = null;
         public Vector3? point_target = null;
         public bool point_targeting = false;
         public bool seeker_active = false;
         public bool target_locked = false;
         public FNFMode current_mode = FNFMode.TopAttack;
+
         public Action<FNFMode, FNFMode> ModeChanged;
         public Action<bool> SeekerToggled;
         public Action<bool> PointTargetingToggled;
         public Action JustFired;
+        public Action LostTrack;
 
         void Awake()
         {
@@ -79,25 +83,26 @@ namespace M2BradleyExtended.FNF
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            if (InputUtil.MainPlayer.GetButtonDown(PlayerInput.ammoKeys[0]))
             {
                 FNFMode old_mode = current_mode;
                 current_mode = FNFMode.TopAttack;
                 ModeChanged?.Invoke(old_mode, current_mode);
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha2))
+            if (InputUtil.MainPlayer.GetButtonDown(PlayerInput.ammoKeys[1]))
             {
                 FNFMode old_mode = current_mode;
                 current_mode = FNFMode.Direct;
                 ModeChanged?.Invoke(old_mode, current_mode);
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha3))
+            if (InputUtil.MainPlayer.GetButtonDown(PlayerInput.ammoKeys[2]))
             {
                 target = null;
                 target_locked = false;
                 point_targeting = !point_targeting;
+                LostTrack?.Invoke();
                 PointTargetingToggled?.Invoke(point_targeting);
             }
         }
@@ -110,7 +115,7 @@ namespace M2BradleyExtended.FNF
                 return;
             }
 
-            Ray ray = new Ray(fcs.AimTransform.position, fcs.AimWorldVector);
+            Ray ray = new Ray(fcs.LaserOrigin.position, fcs.AimWorldVector);
             RaycastHit raycast_hit;
 
             RaycastColliderUtils.Raycast(ray, out raycast_hit, 5000f, ConstantsAndInfoManager.Instance.LaserRangefinderLayerMask);
@@ -134,7 +139,7 @@ namespace M2BradleyExtended.FNF
                 return;
             }
 
-            Ray ray = new Ray(fcs.ReferenceTransform.position, fcs.AimWorldVector);
+            Ray ray = new Ray(fcs.LaserOrigin.position, fcs.AimWorldVector);
             RaycastHit raycast_hit;
 
             int main_body_layer = 1 << 14;
@@ -150,7 +155,7 @@ namespace M2BradleyExtended.FNF
 
             if (target != null && possible_target != null && target_locked)
             {
-                ray = new Ray(fcs.ReferenceTransform.position, target.gameObject.transform.Find("TRACKING OBJECT").transform.position - fcs.ReferenceTransform.position);
+                ray = new Ray(fcs.LaserOrigin.position, target.gameObject.transform.Find("TRACKING OBJECT").transform.position - fcs.ReferenceTransform.position);
                 Physics.Raycast(ray, out raycast_hit, 5000f, main_body_layer | terrain_layer);
 
                 raycast_hit_obj = raycast_hit.transform?.gameObject;
@@ -159,6 +164,7 @@ namespace M2BradleyExtended.FNF
                 {
                     target = null;
                     target_locked = false;
+                    LostTrack?.Invoke();
                 }
             }
 
@@ -185,7 +191,7 @@ namespace M2BradleyExtended.FNF
 
             if (current_mode == FNFMode.Direct)
             {
-                live_round.Info = Ammo.towff_dir_ammo;
+                live_round.Info = ammo_dir;
                 tracker.transform.SetParent(live_round.transform);
                 tracker.transform.localPosition = Vector3.zero;
             }

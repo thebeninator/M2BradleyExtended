@@ -30,8 +30,13 @@ namespace M2BradleyExtended
         private static AmmoType towff_ammo = new AmmoType();
         public static AmmoCodexScriptable towff_round_codex;
         public static AmmoClipCodexScriptable towff_clip_codex;
-
         public static AmmoType towff_dir_ammo = new AmmoType();
+
+        private static AmmoType towff_mp_ammo = new AmmoType();
+        public static AmmoCodexScriptable towff_mp_round_codex;
+        public static AmmoClipCodexScriptable towff_mp_clip_codex;
+
+        public static AmmoType towff_mp_dir_ammo = new AmmoType();
 
         public static AmmoCodexScriptable tow2b_round_codex;
         public static AmmoClipCodexScriptable tow2b_clip_codex;
@@ -62,6 +67,7 @@ namespace M2BradleyExtended
             TOW2();
             TOW2A();
             TOWFF();
+            TOWFFMP();
             //M409A1();
             //MGM51B();
         }
@@ -301,6 +307,58 @@ namespace M2BradleyExtended
             tow_missiles.Add("TOWFF", towff_clip_codex);
         }
 
+        private static void TOWFFMP()
+        {
+            Util.ShallowCopy(towff_mp_ammo, towff_ammo);
+            towff_mp_ammo.RhaPenetration = 650f;
+            towff_mp_ammo.CachedIndex = -1;
+            towff_mp_ammo.TntEquivalentKg = 10.2f;
+            towff_mp_ammo.MinSpallRha = 12f;
+            towff_mp_ammo.MaxSpallRha = 19f;
+            towff_mp_ammo.MuzzleVelocity = 250f;
+            towff_mp_ammo.Name = "BGM-148B Super Javelin";
+            towff_mp_ammo.ImpactEffectDescriptor = new ParticleEffectsManager.ImpactEffectDescriptor()
+            {
+                HasImpactEffect = true,
+                EffectSize = ParticleEffectsManager.EffectSize.Bomb,
+                ImpactCategory = ParticleEffectsManager.Category.HighExplosive,
+                Flags = ParticleEffectsManager.ImpactModifierFlags.VeryLarge,
+                MinFilterStrictness = ParticleEffectsManager.FilterStrictness.Medium,
+                RicochetType = ParticleEffectsManager.RicochetType.NormalTracer
+            };
+            towff_mp_ammo.ArmorOptimizations = new AmmoType.ArmorOptimization[] { };
+
+            Util.CacheAmmo(towff_mp_ammo);
+
+            Util.ShallowCopy(towff_mp_dir_ammo, towff_mp_ammo);
+            towff_mp_dir_ammo.CachedIndex = -1;
+            towff_mp_dir_ammo.ClimbAngle = 18f;
+            towff_mp_dir_ammo.DiveAngle = 75f;
+            towff_mp_dir_ammo.Flight = AmmoType.FlightPattern.Hump;
+            towff_mp_dir_ammo.LoiterAltitude = 60f;
+            towff_mp_dir_ammo.LoiterEndDistance = 100f;
+            towff_mp_dir_ammo.AimPointMarch = 0f;
+            Util.CacheAmmo(towff_mp_dir_ammo);
+
+            if (towff_mp_round_codex != null) return;
+
+            towff_mp_round_codex = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
+            towff_mp_round_codex.AmmoType = towff_mp_ammo;
+            towff_mp_round_codex.name = "towff_mp_ammo";
+
+            AmmoType.AmmoClip towff_mp_clip = new AmmoType.AmmoClip();
+            towff_mp_clip.Capacity = 2;
+            towff_mp_clip.Name = "BGM-148B Super Javelin";
+            towff_mp_clip.MinimalPattern = new AmmoCodexScriptable[1];
+            towff_mp_clip.MinimalPattern[0] = towff_mp_round_codex;
+            towff_mp_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
+            towff_mp_clip_codex.name = "towff_mp_clip";
+            towff_mp_clip_codex.ClipType = towff_mp_clip;
+
+            tow_missiles.Add("TOWFFMP", towff_mp_clip_codex);
+        }
+
+
         private static void M919() {
             Util.ShallowCopy(m919_ammo, Assets.m791_round_codex.AmmoType);
             m919_ammo.CachedIndex = -1;
@@ -389,7 +447,7 @@ namespace M2BradleyExtended
         {
             Util.ShallowCopy(xm1204_ammo, Assets.m792_round_codex.AmmoType);
             xm1204_ammo.CachedIndex = -1;
-            xm1204_ammo.RhaPenetration = 10f;
+            xm1204_ammo.RhaPenetration = 19f;
             xm1204_ammo.MuzzleVelocity = 1001f;
             xm1204_ammo.Mass = 0.250f;
             xm1204_ammo.MaximumRange = 3500f;
@@ -398,6 +456,7 @@ namespace M2BradleyExtended
             xm1204_ammo.TntEquivalentKg = 0.095f;
             xm1204_ammo.SectionalArea *= 4f;
             xm1204_ammo.DetonateSpallCount = 60;
+            xm1204_ammo.ImpactFuseTime = 0.0025f; ;
             xm1204_ammo.Name = "50mm HEAB-T M1204";
             Util.CacheAmmo(xm1204_ammo);
 
@@ -425,11 +484,10 @@ namespace M2BradleyExtended
             xm1204_170_clip_codex.name = "clip_170";
             xm1204_170_clip_codex.ClipType = clip_170;
 
-            // if this seems like an incredibly janky solution: it is :D 
             BallisticComputer xm1204_bc = BallisticComputerRepository._instance.RegisterAmmoType(xm1204_ammo);
             xm1204_bc.SimTimeStep = 0.00015f;
-            xm1204_bc._useVelocityOverride = true;
-            xm1204_bc._velocityOverride = 1000f;
+            //xm1204_bc._useVelocityOverride = true;
+            //xm1204_bc._velocityOverride = 1000f;
             xm1204_bc.RefreshData();
         }
     }

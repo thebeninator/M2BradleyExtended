@@ -53,7 +53,7 @@ namespace M2BradleyExtended
             use_m919_apfsds.Description = "//////////////////////////////////////////////////////////////";
 
             tow_missile_type = cfg.CreateEntry<string>("TOW Missile", "TOW2");
-            tow_missile_type.Comment = "Default, TOW2, TOW2A (anti-ERA), TOWFF (FnF)";
+            tow_missile_type.Comment = "Default, TOW2, TOW2A (anti-ERA), TOWFF (FnF, anti-era), TOWFFMP (FnF)";
 
             has_lrf = cfg.CreateEntry<bool>("Has Laser Rangefinder", true);
             has_lrf.Comment = "Does NOT have automatic lead";
@@ -73,8 +73,10 @@ namespace M2BradleyExtended
 
             //has_citv = cfg.CreateEntry<bool>("Has CITV", false);
             //has_citv.Comment = "Gives commander their own thermal optic; ";
-
-            preset_manager = new PresetManager<M2Preset>(target_preset.Value);
+            if (use_preset_pool.Value)
+            {
+                preset_manager = new PresetManager<M2Preset>(target_preset.Value);
+            }
         }
 
         public static IEnumerator Convert(GameState _) {
@@ -193,7 +195,7 @@ namespace M2BradleyExtended
                     GameObject laser_ref_point = new GameObject("laser ref");
                     laser_ref_point.transform.SetParent(bushmaster.FCS.LaserOrigin);
                     laser_ref_point.transform.localEulerAngles = Vector3.zero;
-                    laser_ref_point.transform.localPosition = new Vector3(0f, 0.35f, 0f);
+                    laser_ref_point.transform.localPosition = new Vector3(0f, 0f, 2f);
                     bushmaster.FCS.LaserOrigin = laser_ref_point.transform;
 
                     day_optic.RangeTextArchetype = "0000";
@@ -344,7 +346,7 @@ namespace M2BradleyExtended
                         tow_clip
                     };
 
-                    if (tow_type == "TOWFF")
+                    if (tow_type.Contains("TOWFF"))
                     {
                         tow.GuidanceUnit.GuidanceStarted -= tow.GuidanceUnit.OnGuidanceStarted;
                         tow.GuidanceUnit.GuidanceStopped -= tow.GuidanceUnit.OnGuidanceStopped;
@@ -353,7 +355,8 @@ namespace M2BradleyExtended
                         //tow.Feed._missileGuidance = null;
                         tow.Feed.ReloadDuringMissileTracking = true;
                         tow.TriggerHoldTime = 0.5f;
-                        Javelin.Add(day_optic, bushmaster.FCS, bushmaster, tow, has_ibas.Value);
+                        AmmoType ammo_dir = tow_type == "TOWFFMP" ? Ammo.towff_mp_dir_ammo : Ammo.towff_dir_ammo;
+                        Javelin.Add(day_optic, bushmaster.FCS, bushmaster, tow, has_ibas.Value, ammo_dir);
                     }
 
                     tow_feed.AmmoTypeInBreech = null;

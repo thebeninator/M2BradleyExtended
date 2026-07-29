@@ -18,6 +18,7 @@ namespace M2BradleyExtended.Airburst
         private int unit_id;
         private bool airburst_ammo_loaded = false;
         private static GameObject airburst_text_ui;
+        private int weapon_system_id;
 
         private void OnAmmoTypeChanged(AmmoType ammo)
         {
@@ -55,6 +56,7 @@ namespace M2BradleyExtended.Airburst
         void Start()
         {
             weapon_system = this.GetComponent<WeaponSystem>();
+            weapon_system_id = weapon_system.GetInstanceID();
             feed = weapon_system.Feed;
             unit_id = weapon_system._unit.GetInstanceID();
 
@@ -66,6 +68,7 @@ namespace M2BradleyExtended.Airburst
         void Update()
         {
             if (AmmoKeyIdx == null) return;
+            if (weapon_system_id != PlayerInput.Instance.CurrentPlayerWeapon.Weapon.GetInstanceID()) return;
             if (!airburst_ammo_loaded && 
                 feed.QueuedClipType.MinimalPattern[0].AmmoType.CachedIndex != AirburstAmmo.CachedIndex) return;
 

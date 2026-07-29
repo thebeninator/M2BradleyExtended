@@ -12,7 +12,7 @@ namespace M2BradleyExtended
     internal class Javelin
     {
         public static void Add(UsableOptic day_optic, FireControlSystem fcs,
-            WeaponSystem bushmaster, WeaponSystem tow, bool has_ibas
+            WeaponSystem bushmaster, WeaponSystem tow, bool has_ibas, AmmoType ammo_dir
         ) {
             UsableOptic night_optic = day_optic.slot.LinkedNightSight.PairedOptic;
             Transform flir_canvas = night_optic.transform.Find("M2 Bradley GPS canvas (1)");
@@ -62,6 +62,7 @@ namespace M2BradleyExtended
             }
 
             FNFManager manager = tow.gameObject.AddComponent<FNFManager>();
+            manager.ammo_dir = ammo_dir;
 
             FNFOptic fnf_optic = night_optic.gameObject.AddComponent<FNFOptic>();
             fnf_optic.gates = javelin_hud.transform.Find("gate holder").GetComponent<RectTransform>();

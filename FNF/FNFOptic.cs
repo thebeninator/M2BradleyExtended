@@ -22,6 +22,7 @@ namespace M2BradleyExtended.FNF
             manager.JustFired += OnFired;
             manager.ModeChanged += OnModeChanged;
             manager.PointTargetingToggled += OnPointTargetingToggled;
+            manager.LostTrack += OnLostTrack;
         }
 
         void OnModeChanged(FNFMode old_mode, FNFMode new_mode)
@@ -33,6 +34,8 @@ namespace M2BradleyExtended.FNF
         void OnPointTargetingToggled(bool enabled)
         {
             point_targeting.gameObject.SetActive(enabled);
+            manual_gates.gameObject.SetActive(manager.seeker_active);
+            reticles.gameObject.SetActive(!manager.seeker_active);
         }
 
         void OnSeekerToggled(bool enabled)
@@ -40,13 +43,15 @@ namespace M2BradleyExtended.FNF
             reticles.gameObject.SetActive(!enabled);
             seek_text.gameObject.SetActive(enabled);
             seeker_box.gameObject.SetActive(enabled);
-            manual_gates.gameObject.SetActive(enabled);
-            manual_gates.sizeDelta = new Vector2(175f, 175f);
-            manual_gates.transform.localPosition = new Vector2(-87.5f, -87.5f);
-            gates.gameObject.SetActive(false);
-            gates.sizeDelta = new Vector2(1f, 1f);
             seeker_post.SetActive(enabled);
             main_post.SetActive(!enabled);
+            manual_gates.gameObject.SetActive(enabled);
+            ResetGates();
+        }
+
+        void OnLostTrack()
+        {
+            ResetGates();
         }
 
         void OnFired()
@@ -63,6 +68,14 @@ namespace M2BradleyExtended.FNF
 
             HandleKeyboardInput();
             if (!manager.point_targeting && manager.target && !manager.target_locked) ResolveLock();
+        }
+
+        public void ResetGates()
+        {
+            gates.gameObject.SetActive(false);
+            gates.sizeDelta = new Vector2(1f, 1f);
+            manual_gates.sizeDelta = new Vector2(175f, 175f);
+            manual_gates.transform.localPosition = new Vector2(-87.5f, -87.5f);
         }
 
         private void HandleKeyboardInput()
