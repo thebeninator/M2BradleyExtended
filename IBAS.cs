@@ -6,6 +6,7 @@ using Reticle;
 using UnityEngine;
 using ModUtil;
 using M2BradleyExtended.FNF;
+using M2BradleyExtended.Airburst;
 
 namespace M2BradleyExtended
 {
@@ -146,6 +147,13 @@ namespace M2BradleyExtended
             bushmaster.Feed.ExclusiveItems[1].Items[1] = ibas_hud.transform.Find("ammo/bushmaster/he").gameObject;
             tow.ExclusiveItems[1] = ibas_hud.transform.Find("ammo/tow").gameObject;
             m240.ExclusiveItems[1] = ibas_hud.transform.Find("ammo/7.62").gameObject;
+
+            AirburstManager airburst_manager = bushmaster.GetComponent<AirburstManager>();
+            if (airburst_manager != null)
+            {
+                airburst_manager.AirburstUIIndicator = ibas_hud.transform.Find("airburst").gameObject;
+            }
+
         }
 
         private static void DayReticle() {

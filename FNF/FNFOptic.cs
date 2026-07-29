@@ -1,7 +1,4 @@
 ﻿using System.Collections.Generic;
-using BehaviorDesigner.Runtime.Tasks.Unity.UnityInput;
-using GHPC.Equipment.Optics;
-using GHPC.Weapons;
 using UnityEngine;
 
 namespace M2BradleyExtended.FNF

@@ -22,7 +22,7 @@ namespace M2BradleyExtended.FNF
             mgu = GetComponent<MissileGuidanceUnit>();
             mgu.GuidanceStopped += HandleGuidanceStopped;
             this.enabled = false;
-            offset = Random.insideUnitSphere * 0.1f;
+            offset = Random.insideUnitSphere * 0.35f;
         }
 
         void HandleGuidanceStopped()
@@ -32,19 +32,14 @@ namespace M2BradleyExtended.FNF
 
         void Update()
         {
-            if (point_targeting)
+            if (target == null && (!point_target.HasValue && point_targeting)) return;
+
+            Vector3 pos = Vector3.zero;
+
+            if (tracking_object == null && !point_targeting)
             {
-                this.transform.position = point_target.Value + Vector3.up * 60f;
-                this.transform.LookAt(point_target.Value);
-                return;
-            }
+                bool is_helo = target.Type == GHPC.UnitType.AirVehicle;
 
-            if (target == null) return;
-
-            bool is_helo = target.Type == GHPC.UnitType.AirVehicle;
-
-            if (tracking_object == null)
-            {
                 if (mode == FNFMode.TopAttack)
                 {
                     offset.y = 0f;
@@ -61,14 +56,23 @@ namespace M2BradleyExtended.FNF
                     MelonLogger.Msg("failed to get transform center, defaulting to tracking obj");
                     tracking_object = target.transform.Find("TRACKING OBJECT");
                 }
+
+                pos = tracking_object.position;
             }
+
+            if (point_targeting)
+            {
+                pos = point_target.Value;
+            }
+
+            Vector3 actual_offset = point_targeting ? Vector3.zero : offset;
 
             if (mode == FNFMode.TopAttack)
             {
-                this.transform.position = tracking_object.position + Vector3.up * 120f;
+                this.transform.position = pos + Vector3.up * 120f + actual_offset;
             }
 
-            this.transform.LookAt(tracking_object.position);
+            this.transform.LookAt(pos + actual_offset);
         }
     }
 }

@@ -6,6 +6,12 @@ using M2BradleyExtended;
 using MelonLoader;
 using UnityEngine;
 using ModUtil;
+using Tomlet.Models;
+using Tomlet;
+using System.IO;
+using MelonLoader.Utils;
+using System.Collections.Generic;
+using Presets;
 
 [assembly: MelonInfo(typeof(Mod), "M2 Bradley Extended", "0.9.1B", "ATLAS")]
 [assembly: MelonGame("Radian Simulations LLC", "GHPC")]
@@ -36,12 +42,18 @@ namespace M2BradleyExtended
 
             module_manager.Add("Assets", new Assets());
             module_manager.Add("M2Ext", new M2Ext());
+
+            PresetManager.LoadAllPresets();
+
+            //M2PresetTemplate template = new M2PresetTemplate();
+            //string toml_string = TomletMain.TomlStringFrom(template);
+
+            //File.WriteAllText(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended/Presets", "template.cfg"), toml_string);
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             module_manager.UnloadAllDynamicAssets();
-
 
             if (sceneName == "MainMenu2_Scene" || sceneName == "MainMenu2-1_Scene" || sceneName == "t64_menu")
             {

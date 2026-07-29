@@ -5,10 +5,7 @@ using HarmonyLib;
 using GHPC.Vehicle;
 using System;
 using GHPC;
-using MelonLoader;
-using GHPC.Utility;
 using GHPC.PhysicsHelpers;
-using static MelonLoader.MelonLogger;
 using GHPC.Player;
 using GHPC.AI;
 
@@ -162,7 +159,6 @@ namespace M2BradleyExtended.FNF
                 {
                     target = null;
                     target_locked = false;
-                    SetSeeker(false);
                 }
             }
 
@@ -189,7 +185,7 @@ namespace M2BradleyExtended.FNF
 
             if (current_mode == FNFMode.Direct)
             {
-                live_round.Info = Ammo.towff_dir_round_codex.AmmoType;
+                live_round.Info = Ammo.towff_dir_ammo;
                 tracker.transform.SetParent(live_round.transform);
                 tracker.transform.localPosition = Vector3.zero;
             }
@@ -236,7 +232,7 @@ namespace M2BradleyExtended.FNF
     [HarmonyPatch(typeof(WeaponSystem), "Fire")]
     internal class FNFFireHandler
     {
-        private static float AI_TIME_TO_FIRE = 7.5f;
+        private static float AI_TIME_TO_FIRE = 6.5f;
 
         private static bool Prefix(WeaponSystem __instance)
         {

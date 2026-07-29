@@ -6,6 +6,8 @@ using GHPC.Weaponry;
 using ModUtil;
 using GHPC.Effects;
 using MelonLoader;
+using GHPC.Weapons;
+using GHPC;
 
 namespace M2BradleyExtended
 {
@@ -29,9 +31,7 @@ namespace M2BradleyExtended
         public static AmmoCodexScriptable towff_round_codex;
         public static AmmoClipCodexScriptable towff_clip_codex;
 
-        private static AmmoType towff_dir_ammo = new AmmoType();
-        public static AmmoCodexScriptable towff_dir_round_codex;
-        public static AmmoClipCodexScriptable towff_dir_clip_codex;
+        public static AmmoType towff_dir_ammo = new AmmoType();
 
         public static AmmoCodexScriptable tow2b_round_codex;
         public static AmmoClipCodexScriptable tow2b_clip_codex;
@@ -42,14 +42,22 @@ namespace M2BradleyExtended
         public static AmmoCodexScriptable mgm51b_round_codex;
         public static AmmoClipCodexScriptable mgm51b_clip_codex;
 
+        private static AmmoType xm1203_ammo = new AmmoType();
         public static AmmoCodexScriptable xm1203_round_codex;
         public static AmmoClipCodexScriptable xm1203_50_clip_codex;
-        public static AmmoClipCodexScriptable xm1203_150_clip_codex;
+        public static AmmoClipCodexScriptable xm1203_170_clip_codex;
+
+        private static AmmoType xm1204_ammo = new AmmoType();
+        public static AmmoCodexScriptable xm1204_round_codex;
+        public static AmmoClipCodexScriptable xm1204_50_clip_codex;
+        public static AmmoClipCodexScriptable xm1204_170_clip_codex;
 
         public static Dictionary<string, AmmoClipCodexScriptable> tow_missiles = new Dictionary<string, AmmoClipCodexScriptable>() {};
 
         public static void Init()
         {
+            XM1203();
+            XM1204();
             M919();
             TOW2();
             TOW2A();
@@ -211,7 +219,7 @@ namespace M2BradleyExtended
         private static void TOWFF()
         {
             Util.ShallowCopy(towff_ammo, tow2_round_codex.AmmoType);
-            towff_ammo.RhaPenetration = 700f;
+            towff_ammo.RhaPenetration = 750f;
             towff_ammo.CachedIndex = -1;
             towff_ammo.TntEquivalentKg = 4.5f;
             towff_ammo.Name = "BGM-148A Super Javelin";
@@ -219,10 +227,10 @@ namespace M2BradleyExtended
             towff_ammo.Flight = AmmoType.FlightPattern.TopAttack;
             towff_ammo.ClimbAngle = 20f;
             towff_ammo.TurnSpeed = 2.5f;
-            towff_ammo.DiveAngle = 45f;
+            towff_ammo.DiveAngle = 89f;
             towff_ammo.LoiterAltitude = 220f;
-            towff_ammo.Coeff = 0.15f;
-            towff_ammo.AimPointMarch = 0.15f;
+            towff_ammo.Coeff = 0.5f;
+            towff_ammo.AimPointMarch = 0f;
             towff_ammo.RangedFuseTime = 25f;
             towff_ammo.NoisePowerX = 0f;
             towff_ammo.NoisePowerY = 0f;
@@ -282,26 +290,13 @@ namespace M2BradleyExtended
             towff_round_codex.name = "towff_ammo";
 
             AmmoType.AmmoClip towff_clip = new AmmoType.AmmoClip();
-            towff_clip.Capacity = 50;
+            towff_clip.Capacity = 2;
             towff_clip.Name = "BGM-148A Super Javelin";
             towff_clip.MinimalPattern = new AmmoCodexScriptable[1];
             towff_clip.MinimalPattern[0] = towff_round_codex;
             towff_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
             towff_clip_codex.name = "towff_clip";
             towff_clip_codex.ClipType = towff_clip;
-
-            towff_dir_round_codex = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
-            towff_dir_round_codex.AmmoType = towff_dir_ammo;
-            towff_dir_round_codex.name = "towff_dir_ammo";
-
-            AmmoType.AmmoClip towff_dir_clip = new AmmoType.AmmoClip();
-            towff_dir_clip.Capacity = 50;
-            towff_dir_clip.Name = "BGM-148A Super Javelin";
-            towff_dir_clip.MinimalPattern = new AmmoCodexScriptable[1];
-            towff_dir_clip.MinimalPattern[0] = towff_dir_round_codex;
-            towff_dir_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
-            towff_dir_clip_codex.name = "towff_dir_clip";
-            towff_dir_clip_codex.ClipType = towff_dir_clip;
 
             tow_missiles.Add("TOWFF", towff_clip_codex);
         }
@@ -353,17 +348,19 @@ namespace M2BradleyExtended
 
         private static void XM1203()
         {
-            AmmoType xm1203_ammo = new AmmoType();
             Util.ShallowCopy(xm1203_ammo, Assets.m791_round_codex.AmmoType);
             xm1203_ammo.CachedIndex = -1;
-            xm1203_ammo.RhaPenetration = 180f;
+            xm1203_ammo.RhaPenetration = 190f;
             xm1203_ammo.MuzzleVelocity = 1600f;
             xm1203_ammo.Mass = 0.160f;
             xm1203_ammo.MaximumRange = 3500f;
-            xm1203_ammo.Coeff = 0.008f;
+            xm1203_ammo.Coeff = 0.0035f;
             xm1203_ammo.Caliber = 50f;
-            xm1203_ammo.SectionalArea *= 2f;
-            xm1203_ammo.Name = "50mm APFSDS-T XM1203";
+            xm1203_ammo.SectionalArea *= 1.35f;
+            xm1203_ammo.Name = "50mm APFSDS-T M1203";
+            Util.CacheAmmo(xm1203_ammo);
+
+            if (xm1203_round_codex != null) return;
 
             xm1203_round_codex = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
             xm1203_round_codex.AmmoType = xm1203_ammo;
@@ -371,21 +368,69 @@ namespace M2BradleyExtended
 
             AmmoType.AmmoClip clip_50 = new AmmoType.AmmoClip();
             clip_50.Capacity = 50;
-            clip_50.Name = "XM1203 APFSDS-T";
+            clip_50.Name = "M1203 APFSDS-T";
             clip_50.MinimalPattern = new AmmoCodexScriptable[1];
             clip_50.MinimalPattern[0] = xm1203_round_codex;
             xm1203_50_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
             xm1203_50_clip_codex.name = "clip_50";
             xm1203_50_clip_codex.ClipType = clip_50;
 
-            AmmoType.AmmoClip clip_150 = new AmmoType.AmmoClip();
-            clip_150.Capacity = 150;
-            clip_150.Name = "XM1203 APFSDS-T";
-            clip_150.MinimalPattern = new AmmoCodexScriptable[1];
-            clip_150.MinimalPattern[0] = xm1203_round_codex;
-            xm1203_150_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
-            xm1203_150_clip_codex.name = "clip_150";
-            xm1203_150_clip_codex.ClipType = clip_150;
+            AmmoType.AmmoClip clip_170 = new AmmoType.AmmoClip();
+            clip_170.Capacity = 170;
+            clip_170.Name = "M1203 APFSDS-T";
+            clip_170.MinimalPattern = new AmmoCodexScriptable[1];
+            clip_170.MinimalPattern[0] = xm1203_round_codex;
+            xm1203_170_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
+            xm1203_170_clip_codex.name = "clip_170";
+            xm1203_170_clip_codex.ClipType = clip_170;
+        }
+
+        private static void XM1204()
+        {
+            Util.ShallowCopy(xm1204_ammo, Assets.m792_round_codex.AmmoType);
+            xm1204_ammo.CachedIndex = -1;
+            xm1204_ammo.RhaPenetration = 10f;
+            xm1204_ammo.MuzzleVelocity = 1001f;
+            xm1204_ammo.Mass = 0.250f;
+            xm1204_ammo.MaximumRange = 3500f;
+            xm1204_ammo.Coeff = 0f;
+            xm1204_ammo.Caliber = 50f;
+            xm1204_ammo.TntEquivalentKg = 0.095f;
+            xm1204_ammo.SectionalArea *= 4f;
+            xm1204_ammo.DetonateSpallCount = 60;
+            xm1204_ammo.Name = "50mm HEAB-T M1204";
+            Util.CacheAmmo(xm1204_ammo);
+
+            if (xm1204_round_codex != null) return;
+
+            xm1204_round_codex = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
+            xm1204_round_codex.AmmoType = xm1204_ammo;
+            xm1204_round_codex.name = "xm1204_ammo";
+
+            AmmoType.AmmoClip clip_50 = new AmmoType.AmmoClip();
+            clip_50.Capacity = 50;
+            clip_50.Name = "M1204 HEAB-T";
+            clip_50.MinimalPattern = new AmmoCodexScriptable[1];
+            clip_50.MinimalPattern[0] = xm1204_round_codex;
+            xm1204_50_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
+            xm1204_50_clip_codex.name = "clip_50";
+            xm1204_50_clip_codex.ClipType = clip_50;
+
+            AmmoType.AmmoClip clip_170 = new AmmoType.AmmoClip();
+            clip_170.Capacity = 170;
+            clip_170.Name = "M1204 HEAB-T";
+            clip_170.MinimalPattern = new AmmoCodexScriptable[1];
+            clip_170.MinimalPattern[0] = xm1204_round_codex;
+            xm1204_170_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
+            xm1204_170_clip_codex.name = "clip_170";
+            xm1204_170_clip_codex.ClipType = clip_170;
+
+            // if this seems like an incredibly janky solution: it is :D 
+            BallisticComputer xm1204_bc = BallisticComputerRepository._instance.RegisterAmmoType(xm1204_ammo);
+            xm1204_bc.SimTimeStep = 0.00015f;
+            xm1204_bc._useVelocityOverride = true;
+            xm1204_bc._velocityOverride = 1000f;
+            xm1204_bc.RefreshData();
         }
     }
 }
