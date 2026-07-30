@@ -11,6 +11,10 @@ Conversions:
 - M2A2 ODS: M2A2 + LRF
 - M2A2 ODS-SA: M2A2 + IBAS
 
+features the preset system for customizable randomization
+
+<img width="1146" height="611" alt="image" src="https://github.com/user-attachments/assets/526340d7-3152-4ee7-8ac7-ae4d67f66838" />
+
 todo list:
 - CITV
 - IBAS autotracking
