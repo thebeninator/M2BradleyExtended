@@ -177,18 +177,6 @@ namespace M2BradleyExtended
                     weapons_manager.Weapons[0].Name = "25mm cannon M242 enhanced";
                 }
 
-                if (cfg_ibas)
-                {
-                    IBAS.Add(day_optic, bushmaster.FCS, bushmaster, tow, m240);
-                    weapons_manager.Weapons[1].MuzzleAngleOffset = Vector3.zero;
-
-                    //CustomGuidanceComputer cgc = bushmaster.FCS.gameObject.AddComponent<CustomGuidanceComputer>();
-                    //cgc.fcs = bushmaster.FCS;
-                    //cgc.mgu = tow.GuidanceUnit;
-
-                    tow.GuidanceUnit.AimElement = turret.Find("GPS reference transform");
-                }
-
                 if (cfg_lrf || cfg_ibas)
                 {
                     bushmaster.FCS.MaxLaserRange = 4000f;
@@ -210,6 +198,18 @@ namespace M2BradleyExtended
                         hud.Find("autocannon ammo types/AP selected").localPosition = new Vector3(60f * 2f, -173f, 0f);
                         hud.Find("autocannon ammo types/HE selected").localPosition = new Vector3(-60f * 2f, -173f, 0f);
                     }
+                }
+
+                if (cfg_ibas)
+                {
+                    IBAS.Add(day_optic, bushmaster.FCS, bushmaster, tow, m240);
+                    weapons_manager.Weapons[1].MuzzleAngleOffset = Vector3.zero;
+
+                    //CustomGuidanceComputer cgc = bushmaster.FCS.gameObject.AddComponent<CustomGuidanceComputer>();
+                    //cgc.fcs = bushmaster.FCS;
+                    //cgc.mgu = tow.GuidanceUnit;
+
+                    tow.GuidanceUnit.AimElement = bushmaster.FCS.LaserOrigin;
                 }
 
                 if (cfg_m919 || cfg_xm913)

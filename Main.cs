@@ -6,14 +6,9 @@ using M2BradleyExtended;
 using MelonLoader;
 using UnityEngine;
 using ModUtil;
-using Tomlet.Models;
-using Tomlet;
-using System.IO;
-using MelonLoader.Utils;
-using System.Collections.Generic;
 using Presets;
 
-[assembly: MelonInfo(typeof(Mod), "M2 Bradley Extended", "0.9.1B", "ATLAS")]
+[assembly: MelonInfo(typeof(Mod), "M2 Bradley Extended", "0.9.5", "ATLAS")]
 [assembly: MelonGame("Radian Simulations LLC", "GHPC")]
 
 namespace M2BradleyExtended
