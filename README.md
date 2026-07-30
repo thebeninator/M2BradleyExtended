@@ -1,6 +1,9 @@
 does NOT require the Vehicle Preloader
 
 adds stuff for the M2 Bradley. unfinished but playable
+additionally features a port and revamp of my older 50mm Bradley mod
+
+gunnery guide for Super Javelin & M1204 HEAB: https://www.youtube.com/watch?v=pJXJtguULuo 
 
 Conversions:
 - M2A1: TOW-2/TOW-2A
@@ -11,7 +14,6 @@ Conversions:
 todo list:
 - CITV
 - IBAS autotracking
-- 50mm Bradley port
 
 <img width="699" height="175" alt="image" src="https://github.com/user-attachments/assets/c86888c5-77d8-4c61-a316-2faf3485f492" />
 
