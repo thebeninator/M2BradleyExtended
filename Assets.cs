@@ -52,27 +52,19 @@ namespace M2BradleyExtended
 
         public static GameObject airburst_text_ui;
 
+        private static AssetBundle m2_extended_assets;
+        private static AssetBundle sheridan_kit_assets;
+        private static AssetBundle towff_assets;
+        private static AssetBundle m913_bundle;
+
         public override void LoadStaticAssets()
         {
             IBAS.Init();
 
-            //m791_70_clip_codex = Resources.FindObjectsOfTypeAll<AmmoClipCodexScriptable>().Where(o => o.name == "clip_M791_70rd_load").First();
-            //m791_50_clip_codex = Resources.FindObjectsOfTypeAll<AmmoClipCodexScriptable>().Where(o => o.name == "clip_M791_50rd_box").First();
-            //m791_230_clip_codex = Resources.FindObjectsOfTypeAll<AmmoClipCodexScriptable>().Where(o => o.name == "clip_M791_230rd_load").First();
-            //atow_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_TOW").First();
-
-            //br412d_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_BR-412D").First();
-
-            //GameObject t64 = Resources.FindObjectsOfTypeAll<Vehicle>().Where(o => o.name == "T64A 1981").First().gameObject;
-            //GameObject _125mm_muzzle_flash = t64.transform.Find("---MAIN GUN SCRIPTS---/125mm Gun 2A46M/GameObject/105mm Muzzle Flash").gameObject;
-            //_125mm_muzzle_flash.SetActive(false);
-            //muzzle_flash_125 = GameObject.Instantiate(t64.transform.Find("---MAIN GUN SCRIPTS---/125mm Gun 2A46M/GameObject/105mm Muzzle Flash").gameObject);
-            //_125mm_muzzle_flash.SetActive(true);
-
-            AssetBundle m2_extended_assets = AssetBundle.LoadFromFile(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended", "m2assets"));
-            AssetBundle sheridan_kit_assets = AssetBundle.LoadFromFile(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended", "sheridan_kit"));
-            AssetBundle towff_assets = AssetBundle.LoadFromFile(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended", "towff"));
-            AssetBundle m913_bundle = AssetBundle.LoadFromFile(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended/m913"));
+            m2_extended_assets = AssetBundle.LoadFromFile(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended", "m2assets"));
+            sheridan_kit_assets = AssetBundle.LoadFromFile(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended", "sheridan_kit"));
+            towff_assets = AssetBundle.LoadFromFile(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended", "towff"));
+            m913_bundle = AssetBundle.LoadFromFile(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended/m913"));
 
             m2_bradley_smr_cleaned = m2_extended_assets.LoadAsset<Mesh>("m2_smr_clean.asset");
             m2_bradley_smr_cleaned_enhanced = m2_extended_assets.LoadAsset<Mesh>("m2_smr_clean_enhanced.asset");
@@ -106,6 +98,12 @@ namespace M2BradleyExtended
 
             ibas_hud = m2_extended_assets.LoadAsset<GameObject>("ibas hud.prefab");
 
+            javelin_hud = towff_assets.LoadAsset<GameObject>("javelin hud");
+            javelin_mode_hud = towff_assets.LoadAsset<GameObject>("javelin mode hud");
+
+            m913_prefab = m913_bundle.LoadAsset<GameObject>("m913.prefab");
+            Util.SetupFLIRShaders(m913_prefab);
+
             US_generic_hhs = ScriptableObject.CreateInstance<ArmorCodexScriptable>();
             US_generic_hhs.name = "us gen hhs";
             ArmorType hhs = new ArmorType();
@@ -121,56 +119,67 @@ namespace M2BradleyExtended
             hhs.ThicknessSource = ArmorType.RhaSource.BHN;
             US_generic_hhs.ArmorType = hhs;
 
-            javelin_hud = towff_assets.LoadAsset<GameObject>("javelin hud");
-            javelin_mode_hud = towff_assets.LoadAsset<GameObject>("javelin mode hud");
-
-            m913_prefab = m913_bundle.LoadAsset<GameObject>("m913.prefab");
-            Util.SetupFLIRShaders(m913_prefab);
-
             airburst_text_ui = new GameObject("airburst text");
             Transform transform = airburst_text_ui.transform;
             CanvasRenderer canvas_rend = airburst_text_ui.AddComponent<CanvasRenderer>();
 
-            Text text = airburst_text_ui.AddComponent<Text>();
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            text.fontSize = 14;
-            text.text = "Airburst";
+            Text ab_text = airburst_text_ui.AddComponent<Text>();
+            ab_text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            ab_text.fontSize = 14;
+            ab_text.text = "Airburst";
 
             RectTransform rect_transform = (RectTransform)canvas_rend.transform;
             rect_transform.anchorMin = Vector2.zero;
             rect_transform.anchorMax = Vector2.zero;
+
+            //m791_70_clip_codex = Resources.FindObjectsOfTypeAll<AmmoClipCodexScriptable>().Where(o => o.name == "clip_M791_70rd_load").First();
+            //m791_50_clip_codex = Resources.FindObjectsOfTypeAll<AmmoClipCodexScriptable>().Where(o => o.name == "clip_M791_50rd_box").First();
+            //m791_230_clip_codex = Resources.FindObjectsOfTypeAll<AmmoClipCodexScriptable>().Where(o => o.name == "clip_M791_230rd_load").First();
+            //atow_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_TOW").First();
+
+            //br412d_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_BR-412D").First();
+
+            //GameObject t64 = Resources.FindObjectsOfTypeAll<Vehicle>().Where(o => o.name == "T64A 1981").First().gameObject;
+            //GameObject _125mm_muzzle_flash = t64.transform.Find("---MAIN GUN SCRIPTS---/125mm Gun 2A46M/GameObject/105mm Muzzle Flash").gameObject;
+            //_125mm_muzzle_flash.SetActive(false);
+            //muzzle_flash_125 = GameObject.Instantiate(t64.transform.Find("---MAIN GUN SCRIPTS---/125mm Gun 2A46M/GameObject/105mm Muzzle Flash").gameObject);
+            //_125mm_muzzle_flash.SetActive(true);
+        }
+
+        public override void UnloadDynamicAssets()
+        {
+
         }
 
         public override void LoadDynamicAssets()
         {
-            if (AssetUtil.VehicleInMission("M2 Bradley") || AssetUtil.VehicleInMission("M2 Bradley(AP heavy belt temp) Variant")) 
+            if (!AssetUtil.VehicleInMission("M2 Bradley") && !AssetUtil.VehicleInMission("M2 Bradley(AP heavy belt temp) Variant")) return;
+
+            AssetUtil.LoadVanillaVehicle("M2BRADLEY"); // force load the codices immediately
+            m791_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_25mm_M791_APDS").First();
+            m792_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_25mm_M792_HE").First();
+            itow_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_I-TOW").First();
+            Ammo.Init();
+
+            Vehicle m60a3 = AssetUtil.LoadVanillaVehicle("M60A3TTS");
+            flir_blit_mat_green = m60a3.transform.Find("Turret Scripts/Sights/FLIR").GetComponent<CameraSlot>().FLIRBlitMaterialOverride;
+
+            ibas_font = Resources.FindObjectsOfTypeAll<TMPro.TMP_FontAsset>().Where(o => o.name == "VCR_OSD_MONO_1 green").First();
+
+            foreach (TMPro.TextMeshProUGUI text in ibas_hud.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true))
             {
-                AssetUtil.LoadVanillaVehicle("M2BRADLEY"); // force load the codices immediately
-                m791_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_25mm_M791_APDS").First();
-                m792_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_25mm_M792_HE").First();
-                itow_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_I-TOW").First();
-                Ammo.Init();
-
-                Vehicle m60a3 = AssetUtil.LoadVanillaVehicle("M60A3TTS");
-                flir_blit_mat_green = m60a3.transform.Find("Turret Scripts/Sights/FLIR").GetComponent<CameraSlot>().FLIRBlitMaterialOverride;
-
-                ibas_font = Resources.FindObjectsOfTypeAll<TMPro.TMP_FontAsset>().Where(o => o.name == "VCR_OSD_MONO_1 green").First();
-
-                foreach (TMPro.TextMeshProUGUI text in ibas_hud.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true))
-                {
-                    text.font = ibas_font;
-                }
-
-                foreach (TMPro.TextMeshProUGUI text in javelin_hud.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true))
-                {
-                    text.font = ibas_font;
-                }
-
-                foreach (TMPro.TextMeshProUGUI text in javelin_mode_hud.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true))
-                {
-                    text.font = ibas_font;
-                }
+                text.font = ibas_font;
             }
+
+            foreach (TMPro.TextMeshProUGUI text in javelin_hud.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true))
+            {
+                text.font = ibas_font;
+            }
+
+            foreach (TMPro.TextMeshProUGUI text in javelin_mode_hud.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true))
+            {
+                text.font = ibas_font;
+            }          
         }
     }
 }

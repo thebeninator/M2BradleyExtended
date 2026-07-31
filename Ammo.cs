@@ -8,6 +8,10 @@ using GHPC.Effects;
 using MelonLoader;
 using GHPC.Weapons;
 using GHPC;
+using GHPC.Equipment;
+using System.Linq;
+using System.Collections;
+using GHPC.State;
 
 namespace M2BradleyExtended
 {
@@ -58,6 +62,38 @@ namespace M2BradleyExtended
         public static AmmoClipCodexScriptable xm1204_170_clip_codex;
 
         public static Dictionary<string, AmmoClipCodexScriptable> tow_missiles = new Dictionary<string, AmmoClipCodexScriptable>() {};
+
+        public static IEnumerator SetupEraOptimizations(GameState _)
+        {
+            ArmorCodexScriptable[] armor_codices = Resources.FindObjectsOfTypeAll<ArmorCodexScriptable>();
+            ArmorCodexScriptable[] k1_k5_m1_codices = armor_codices.Where
+            (
+                o => 
+                o.name.Contains("Kontakt-1") ||
+                o.name.Contains("Kontakt-5") ||
+                o.name.Contains("M1 ERA")
+            ).ToArray();
+
+            ArmorCodexScriptable[] relikt_codices = armor_codices.Where(o => o.name.Contains("Relikt")).ToArray();
+
+            List<AmmoType.ArmorOptimization> optimizations = new List<AmmoType.ArmorOptimization>();
+
+            foreach (ArmorCodexScriptable codex in k1_k5_m1_codices)
+            {
+                optimizations.Add(Util.CreateArmourOptimization(codex, 0.05f));
+            }
+
+            foreach (ArmorCodexScriptable relikt_codex in relikt_codices)
+            {
+                optimizations.Add(Util.CreateArmourOptimization(relikt_codex, 0.1f));
+            }
+
+            tow2a_ammo.ArmorOptimizations = optimizations.ToArray();
+            towff_ammo.ArmorOptimizations = tow2a_ammo.ArmorOptimizations;
+            towff_dir_ammo.ArmorOptimizations = tow2a_ammo.ArmorOptimizations;
+
+            yield break;
+        }
 
         public static void Init()
         {
@@ -169,41 +205,6 @@ namespace M2BradleyExtended
             tow2a_ammo.NoLeadCompensation = true;
             Util.CacheAmmo(tow2a_ammo);
 
-            string era_schema = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.EraSchema");
-            string k1 = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.Kontakt1");
-            string k5 = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.Kontakt5");
-            string relikt = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.Relikt");
-            Type era_schema_type = Type.GetType(era_schema);
-            Type k1_type = Type.GetType(k1);
-            Type k5_type = Type.GetType(k5);
-            Type relikt_type = Type.GetType(relikt);
-
-            if (k1_type != null)
-            {
-                BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
-                FieldInfo era_schema_so = era_schema_type.GetField("era_so", BindingFlags.Public | BindingFlags.Instance);
-                Func<Type, ArmorCodexScriptable> get_codex = type => (ArmorCodexScriptable)era_schema_so.GetValue(type.GetField("schema", flags).GetValue(null));
-
-                tow2a_ammo.ArmorOptimizations = new AmmoType.ArmorOptimization[] 
-                {
-                    new AmmoType.ArmorOptimization() 
-                    {
-                        Armor = get_codex(relikt_type),
-                        RhaRatio = 0.10f
-                    },
-                    new AmmoType.ArmorOptimization() 
-                    {
-                        Armor = get_codex(k5_type),
-                        RhaRatio = 0.05f
-                    },
-                    new AmmoType.ArmorOptimization() 
-                    {
-                        Armor = get_codex(k1_type),
-                        RhaRatio = 0.05f
-                    }
-                };
-            }
-
             if (tow2a_round_codex != null) return;
 
             tow2a_round_codex = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
@@ -225,6 +226,7 @@ namespace M2BradleyExtended
         private static void TOWFF()
         {
             Util.ShallowCopy(towff_ammo, tow2_round_codex.AmmoType);
+            towff_ammo.MuzzleVelocity = 150f;
             towff_ammo.RhaPenetration = 750f;
             towff_ammo.CachedIndex = -1;
             towff_ammo.TntEquivalentKg = 4.5f;
@@ -237,47 +239,12 @@ namespace M2BradleyExtended
             towff_ammo.LoiterAltitude = 220f;
             towff_ammo.Coeff = 0.5f;
             towff_ammo.AimPointMarch = 0f;
-            towff_ammo.RangedFuseTime = 25f;
+            towff_ammo.RangedFuseTime = 35f;
             towff_ammo.NoisePowerX = 0f;
             towff_ammo.NoisePowerY = 0f;
             towff_ammo.NoiseTimeScale = 1f;
 
             Util.CacheAmmo(towff_ammo);
-
-            string era_schema = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.EraSchema");
-            string k1 = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.Kontakt1");
-            string k5 = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.Kontakt5");
-            string relikt = Assembly.CreateQualifiedName("PactIncreasedLethality", "PactIncreasedLethality.Relikt");
-            Type era_schema_type = Type.GetType(era_schema);
-            Type k1_type = Type.GetType(k1);
-            Type k5_type = Type.GetType(k5);
-            Type relikt_type = Type.GetType(relikt);
-
-            if (k1_type != null)
-            {
-                BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
-                FieldInfo era_schema_so = era_schema_type.GetField("era_so", BindingFlags.Public | BindingFlags.Instance);
-                Func<Type, ArmorCodexScriptable> get_codex = type => (ArmorCodexScriptable)era_schema_so.GetValue(type.GetField("schema", flags).GetValue(null));
-
-                towff_ammo.ArmorOptimizations = new AmmoType.ArmorOptimization[] 
-                {
-                    new AmmoType.ArmorOptimization() 
-                    {
-                        Armor = get_codex(relikt_type),
-                        RhaRatio = 0.10f
-                    },
-                    new AmmoType.ArmorOptimization() 
-                    {
-                        Armor = get_codex(k5_type),
-                        RhaRatio = 0.05f
-                    },
-                    new AmmoType.ArmorOptimization() 
-                    {
-                        Armor = get_codex(k1_type),
-                        RhaRatio = 0.05f
-                    }
-                };
-            }
 
             Util.ShallowCopy(towff_dir_ammo, towff_ammo);
             towff_dir_ammo.CachedIndex = -1;
@@ -315,7 +282,7 @@ namespace M2BradleyExtended
             towff_mp_ammo.TntEquivalentKg = 10.2f;
             towff_mp_ammo.MinSpallRha = 12f;
             towff_mp_ammo.MaxSpallRha = 19f;
-            towff_mp_ammo.MuzzleVelocity = 250f;
+            towff_mp_ammo.MuzzleVelocity = 140f;
             towff_mp_ammo.Name = "BGM-148B Super Javelin";
             towff_mp_ammo.ImpactEffectDescriptor = new ParticleEffectsManager.ImpactEffectDescriptor()
             {

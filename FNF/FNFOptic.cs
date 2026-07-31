@@ -51,7 +51,8 @@ namespace M2BradleyExtended.FNF
 
         void OnLostTrack()
         {
-            ResetGates();
+            reticles.gameObject.SetActive(!manager.seeker_active);
+            ResetGates(true);
         }
 
         void OnFired()
@@ -70,10 +71,12 @@ namespace M2BradleyExtended.FNF
             if (!manager.point_targeting && manager.target && !manager.target_locked) ResolveLock();
         }
 
-        public void ResetGates()
+        public void ResetGates(bool force_manual_enabled = false)
         {
             gates.gameObject.SetActive(false);
             gates.sizeDelta = new Vector2(1f, 1f);
+
+            if (force_manual_enabled) manual_gates.gameObject.SetActive(true);
             manual_gates.sizeDelta = new Vector2(175f, 175f);
             manual_gates.transform.localPosition = new Vector2(-87.5f, -87.5f);
         }
@@ -110,8 +113,8 @@ namespace M2BradleyExtended.FNF
             float manual_gate_x = manual_gates.sizeDelta.x;
             float manual_gate_y = manual_gates.sizeDelta.y;
 
-            bool acceptable_x = (manual_gate_x <= gate_x + diff_x * 4f) && (manual_gate_x >= gate_x - diff_x * 3f);
-            bool acceptable_y = (manual_gate_y <= gate_y + diff_y * 4f) && (manual_gate_y >= gate_y - diff_y * 3f);
+            bool acceptable_x = (manual_gate_x <= gate_x + diff_x * 4f) && (manual_gate_x >= gate_x - diff_x * 4.5f);
+            bool acceptable_y = (manual_gate_y <= gate_y + diff_y * 4f) && (manual_gate_y >= gate_y - diff_y * 4.5f);
 
             if (acceptable_x && acceptable_y)
             {

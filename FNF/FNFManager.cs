@@ -9,6 +9,8 @@ using GHPC.PhysicsHelpers;
 using GHPC.Player;
 using GHPC.AI;
 using GHPC.Utility;
+using MelonLoader;
+using System.Linq;
 
 namespace M2BradleyExtended.FNF
 {
@@ -153,14 +155,31 @@ namespace M2BradleyExtended.FNF
                 target = possible_target;
             }
 
-            if (target != null && possible_target != null && target_locked)
+            if (target != null && target_locked)
             {
-                ray = new Ray(fcs.LaserOrigin.position, target.gameObject.transform.Find("TRACKING OBJECT").transform.position - fcs.ReferenceTransform.position);
-                Physics.Raycast(ray, out raycast_hit, 5000f, main_body_layer | terrain_layer);
+                bool is_helo = target.Type == GHPC.UnitType.AirVehicle;
+
+                Transform transforms = is_helo ? target.transform : target.transform.Find("transforms");
+                Vector3 top = transforms.GetComponentsInChildren<Transform>().Where(t => t.name.Contains("top")).First().position;
+                Vector3 center = transforms.GetComponentsInChildren<Transform>().Where(t => t.name.Contains("center")).First().position;
+
+                ray = new Ray(fcs.LaserOrigin.position, top - fcs.LaserOrigin.position);
+                RaycastColliderUtils.Raycast(ray, out raycast_hit, 5000f, ConstantsAndInfoManager.Instance.LaserRangefinderLayerMask);
+
+                RaycastHit raycast_hit2;
+                Ray ray2 = new Ray(fcs.LaserOrigin.position, center - fcs.LaserOrigin.position);
+                RaycastColliderUtils.Raycast(ray2, out raycast_hit2, 5000f, ConstantsAndInfoManager.Instance.LaserRangefinderLayerMask);
 
                 raycast_hit_obj = raycast_hit.transform?.gameObject;
+                GameObject raycast_hit_obj2 = raycast_hit2.transform?.gameObject;
 
-                if (raycast_hit_obj == null || raycast_hit_obj.GetComponentInParent<Vehicle>() == null)
+                IArmor armour_ray1 = raycast_hit_obj.GetComponent<IArmor>();
+                IArmor armour_ray2 = raycast_hit_obj2.GetComponent<IArmor>();
+
+                Vehicle vic_ray1 = armour_ray1 != null ? (armour_ray1.Unit as Vehicle) : raycast_hit_obj.GetComponentInParent<Vehicle>();
+                Vehicle vic_ray2 = armour_ray2 != null ? (armour_ray2.Unit as Vehicle) : raycast_hit_obj2.GetComponentInParent<Vehicle>();
+
+                if (vic_ray1 == null && vic_ray2 == null)
                 {
                     target = null;
                     target_locked = false;

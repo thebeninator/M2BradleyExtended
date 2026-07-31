@@ -8,7 +8,7 @@ using UnityEngine;
 using ModUtil;
 using Presets;
 
-[assembly: MelonInfo(typeof(Mod), "M2 Bradley Extended", "0.9.5A", "ATLAS")]
+[assembly: MelonInfo(typeof(Mod), "M2 Bradley Extended", "0.9.5B", "ATLAS")]
 [assembly: MelonGame("Radian Simulations LLC", "GHPC")]
 
 namespace M2BradleyExtended
@@ -18,6 +18,7 @@ namespace M2BradleyExtended
         private ModuleManager module_manager;
         public static Vehicle[] vics;
         public static MelonPreferences_Category cfg;
+        private int valid_scene_count = 0;
 
         internal IEnumerator OnGameReady(GameState _)
         {
@@ -58,8 +59,15 @@ namespace M2BradleyExtended
 
             if (Util.menu_screens.Contains(sceneName)) return;
 
-            StateController.RunOrDefer(GameState.GameReady, new GameStateEventHandler(OnGameReady), GameStatePriority.Medium);
-            StateController.RunOrDefer(GameState.GameReady, new GameStateEventHandler(M2Ext.Convert), GameStatePriority.Medium);
+            valid_scene_count++;
+
+            if (valid_scene_count == 2)
+            {
+                StateController.RunOrDefer(GameState.PlayerReady, new GameStateEventHandler(OnGameReady), GameStatePriority.Medium);
+                StateController.RunOrDefer(GameState.PlayerReady, new GameStateEventHandler(M2Ext.Convert), GameStatePriority.Medium);
+                StateController.RunOrDefer(GameState.GameReady, new GameStateEventHandler(Ammo.SetupEraOptimizations), GameStatePriority.Lowest);
+                valid_scene_count = 0;
+            }
         }
     }
 }
