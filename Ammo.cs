@@ -234,8 +234,8 @@ namespace M2BradleyExtended
             towff_ammo.Guidance = AmmoType.GuidanceType.Laser;
             towff_ammo.Flight = AmmoType.FlightPattern.TopAttack;
             towff_ammo.ClimbAngle = 20f;
-            towff_ammo.TurnSpeed = 2.5f;
-            towff_ammo.DiveAngle = 89f;
+            towff_ammo.TurnSpeed = 6f;
+            towff_ammo.DiveAngle = 85f;
             towff_ammo.LoiterAltitude = 220f;
             towff_ammo.Coeff = 0.5f;
             towff_ammo.AimPointMarch = 0f;
@@ -251,6 +251,7 @@ namespace M2BradleyExtended
             towff_dir_ammo.ClimbAngle = 18f;
             towff_dir_ammo.DiveAngle = 75f;
             towff_dir_ammo.Flight = AmmoType.FlightPattern.Hump;
+            towff_dir_ammo.TurnSpeed = 2.5f;
             towff_dir_ammo.LoiterAltitude = 60f;
             towff_dir_ammo.LoiterEndDistance = 100f;
             towff_dir_ammo.AimPointMarch = 0f;
@@ -301,6 +302,7 @@ namespace M2BradleyExtended
             towff_mp_dir_ammo.CachedIndex = -1;
             towff_mp_dir_ammo.ClimbAngle = 18f;
             towff_mp_dir_ammo.DiveAngle = 75f;
+            towff_mp_dir_ammo.TurnSpeed = 2.5f;
             towff_mp_dir_ammo.Flight = AmmoType.FlightPattern.Hump;
             towff_mp_dir_ammo.LoiterAltitude = 60f;
             towff_mp_dir_ammo.LoiterEndDistance = 100f;

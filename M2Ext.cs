@@ -186,7 +186,7 @@ namespace M2BradleyExtended
                 GameObject laser_ref_point = new GameObject("laser ref");
                 laser_ref_point.transform.SetParent(bushmaster.FCS.LaserOrigin);
                 laser_ref_point.transform.localEulerAngles = Vector3.zero;
-                laser_ref_point.transform.localPosition = new Vector3(0f, 0f, 2f);
+                laser_ref_point.transform.localPosition = new Vector3(0f, 0f, 5f);
                 bushmaster.FCS.LaserOrigin = laser_ref_point.transform;
 
                 day_optic.RangeTextArchetype = "0000";
@@ -359,7 +359,7 @@ namespace M2BradleyExtended
                     tow.Feed.ReloadDuringMissileTracking = true;
                     tow.TriggerHoldTime = 0.5f;
                     AmmoType ammo_dir = tow_type == "TOWFFMP" ? Ammo.towff_mp_dir_ammo : Ammo.towff_dir_ammo;
-                    Javelin.Add(day_optic, bushmaster.FCS, bushmaster, tow, has_ibas.Value, ammo_dir);
+                    Javelin.Add(day_optic, bushmaster.FCS, bushmaster, tow, cfg_ibas, ammo_dir);
                 }
 
                 tow_feed.AmmoTypeInBreech = null;

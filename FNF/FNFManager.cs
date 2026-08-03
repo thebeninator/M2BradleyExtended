@@ -12,7 +12,6 @@ using GHPC.Crew;
 using GHPC.Utility;
 using System.Linq;
 using GHPC.Camera;
-using MelonLoader;
 
 namespace M2BradleyExtended.FNF
 {
@@ -269,10 +268,13 @@ namespace M2BradleyExtended.FNF
         private static void Postfix()
         {
             if(!M2Ext.alternative_tracking_gate_controls.Value) return;
+
             WeaponSystem weapon = PlayerInput.Instance?.CurrentPlayerWeapon?.Weapon;
+
             if (weapon == null) return;
 
             FNFManager fnf = weapon.GetComponent<FNFManager>();
+
             if (fnf == null || !fnf.seeker_active) return;
 
             if (!PlayerInput.Instance.IsExteriorMode)
@@ -298,12 +300,17 @@ namespace M2BradleyExtended.FNF
         private static bool Prefix()
         {
             if (!M2Ext.alternative_tracking_gate_controls.Value) return true;
+
             WeaponSystem weapon = PlayerInput.Instance?.CurrentPlayerWeapon?.Weapon;
+
             if (weapon == null) return true;
 
             FNFManager fnf = weapon.GetComponent<FNFManager>();
+
             if (fnf != null && fnf.seeker_active && !PlayerInput.Instance.IsExteriorMode)
+            {
                 return false;
+            }
 
             return true;
         }

@@ -62,7 +62,7 @@ namespace M2BradleyExtended.FNF
 
             if (mode == FNFMode.TopAttack)
             {
-                this.transform.position = pos + Vector3.up * 120f + actual_offset;
+                this.transform.position = pos + Vector3.up * 1000f + actual_offset;
             }
 
             this.transform.LookAt(pos + actual_offset);

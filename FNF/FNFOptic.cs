@@ -68,6 +68,7 @@ namespace M2BradleyExtended.FNF
 
             Vector2 local_positon = manual_gates.transform.localPosition;
             Vector2 size_delta = manual_gates.sizeDelta;
+
             if (M2Ext.alternative_tracking_gate_controls.Value)
             {
                 AlternativeHandleKeyboardInput();
@@ -75,9 +76,12 @@ namespace M2BradleyExtended.FNF
             else
             {
                 HandleKeyboardInput();
-
             }
-            if (!manager.point_targeting && manager.target && !manager.target_locked) ResolveLock();
+
+            if (!manager.point_targeting && manager.target && !manager.target_locked)
+            {
+                ResolveLock();
+            }
         }
 
         public void ResetGates(bool force_manual_enabled = false)
@@ -85,7 +89,10 @@ namespace M2BradleyExtended.FNF
             gates.gameObject.SetActive(false);
             gates.sizeDelta = new Vector2(1f, 1f);
 
-            if (force_manual_enabled) manual_gates.gameObject.SetActive(true);
+            if (force_manual_enabled)
+            {
+                manual_gates.gameObject.SetActive(true);
+            }
             manual_gates.sizeDelta = new Vector2(175f, 175f);
             manual_gates.transform.localPosition = new Vector2(-87.5f, -87.5f);
         }
@@ -116,6 +123,7 @@ namespace M2BradleyExtended.FNF
         private void AlternativeHandleKeyboardInput()
         {
             if (PlayerInput.Instance.IsExteriorMode) return;
+
             if (InputUtil.MainPlayer.GetButton("Movement Y Pos"))
             {
                 UpdateTrackingGateDim(0f, 144f);
@@ -125,10 +133,12 @@ namespace M2BradleyExtended.FNF
             {
                 UpdateTrackingGateDim(0f, -144f);
             }
+
             if (InputUtil.MainPlayer.GetButton("Movement X Pos"))
             {
                 UpdateTrackingGateDim(144f, 0f);
             }
+
             if (InputUtil.MainPlayer.GetButton("Movement X Neg"))
             {
                 UpdateTrackingGateDim(-144f, 0f);

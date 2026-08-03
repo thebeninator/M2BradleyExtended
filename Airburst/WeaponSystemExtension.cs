@@ -15,7 +15,7 @@ namespace M2BradleyExtended.Airburst
 
             float range = weapon_system.FCS.CurrentRange;
             float muzzle_offset = Vector3.Distance(weapon_system.MuzzleIdentity.position, weapon_system.FCS.ReferenceTransform.position);
-            float flight_time = BallisticComputerRepository._instance.GetFlightTime(ammo_type, range + muzzle_offset + 2f);
+            float flight_time = BallisticComputerRepository._instance.GetFlightTime(ammo_type, range + muzzle_offset + 5f);
             round._rangedFuseActive = true;
             round._fusedStatus = GHPC.Effects.ParticleEffectsManager.FusedStatus.Fuzed;
             round._rangedFuseCountdown = flight_time;
