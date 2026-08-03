@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using GHPC.Player;
+using GHPC.Utility;
 
 namespace M2BradleyExtended.FNF
 {
@@ -83,27 +85,19 @@ namespace M2BradleyExtended.FNF
 
         private void HandleKeyboardInput()
         {
-            if (Input.GetKey(KeyCode.UpArrow))
-            {
+            if (PlayerInput.Instance.IsExteriorMode) return;
+            if (InputUtil.MainPlayer.GetButton("Movement Y Pos"))
                 UpdateTrackingGateDim(0f, 144f);
-            }
 
-            if (Input.GetKey(KeyCode.DownArrow))
-            {
+            if (InputUtil.MainPlayer.GetButton("Movement Y Neg"))
                 UpdateTrackingGateDim(0f, -144f);
-            }
 
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
+            if (InputUtil.MainPlayer.GetButton("Movement X Pos"))
                 UpdateTrackingGateDim(144f, 0f);
-            }
 
-            if (Input.GetKey(KeyCode.LeftArrow))
-            {
+            if (InputUtil.MainPlayer.GetButton("Movement X Neg"))
                 UpdateTrackingGateDim(-144f, 0f);
-            }
         }
-
         private void ResolveLock()
         {
             float gate_x = gates.sizeDelta.x;
