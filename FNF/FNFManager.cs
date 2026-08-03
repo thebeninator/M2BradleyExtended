@@ -8,9 +8,11 @@ using GHPC;
 using GHPC.PhysicsHelpers;
 using GHPC.Player;
 using GHPC.AI;
+using GHPC.Crew;
 using GHPC.Utility;
-using MelonLoader;
 using System.Linq;
+using GHPC.Camera;
+using MelonLoader;
 
 namespace M2BradleyExtended.FNF
 {
@@ -24,6 +26,8 @@ namespace M2BradleyExtended.FNF
         private FireControlSystem fcs;
         private float seek_cd = 0f;
         private int self;
+        internal Vehicle own_vehicle;
+        private DriverBrain driver_brain;
 
         public AmmoType ammo_dir;
         public Vehicle target = null;
@@ -41,7 +45,9 @@ namespace M2BradleyExtended.FNF
 
         void Awake()
         {
-            self = GetComponentInParent<Vehicle>().GetInstanceID();
+            own_vehicle = GetComponentInParent<Vehicle>();
+            self = own_vehicle.GetInstanceID();
+            driver_brain = own_vehicle.GetComponentInChildren<DriverBrain>();
             weapon_system = GetComponent<WeaponSystem>();
             weapon_system_id = weapon_system.GetInstanceID();
             fcs = weapon_system.FCS;
@@ -244,6 +250,9 @@ namespace M2BradleyExtended.FNF
 
         public void SetSeeker(bool enabled)
         {
+            if (enabled && M2Ext.alternative_tracking_gate_controls.Value)
+                own_vehicle.Chassis.KillDriving(true, false, false);
+
             seeker_active = enabled;
             SeekerToggled?.Invoke(seeker_active);
         }
@@ -251,6 +260,52 @@ namespace M2BradleyExtended.FNF
         public void SetTargetLocked(bool locked)
         {
             target_locked = locked;
+        }
+    }
+
+    [HarmonyPatch(typeof(CameraManager), "ToggleCameraSlotSet")]
+    internal class FNFCameraTogglePatch
+    {
+        private static void Postfix()
+        {
+            if(!M2Ext.alternative_tracking_gate_controls.Value) return;
+            WeaponSystem weapon = PlayerInput.Instance?.CurrentPlayerWeapon?.Weapon;
+            if (weapon == null) return;
+
+            FNFManager fnf = weapon.GetComponent<FNFManager>();
+            if (fnf == null || !fnf.seeker_active) return;
+
+            if (!PlayerInput.Instance.IsExteriorMode)
+            {
+                fnf.own_vehicle.Chassis.KillDriving(true, false, false);
+            }
+            else
+            {
+                NwhChassis chassis = fnf.own_vehicle.Chassis as NwhChassis;
+                if (chassis != null)
+                {
+                    chassis.VehicleController.drivingAssists.cruiseControl.useBrakesOnOverspeed = false;
+                    chassis.VehicleController.drivingAssists.abs.enabled = true;
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayerInput), "DriverInput")]
+    internal class FNFDriverInputBlocker
+    {
+        
+        private static bool Prefix()
+        {
+            if (!M2Ext.alternative_tracking_gate_controls.Value) return true;
+            WeaponSystem weapon = PlayerInput.Instance?.CurrentPlayerWeapon?.Weapon;
+            if (weapon == null) return true;
+
+            FNFManager fnf = weapon.GetComponent<FNFManager>();
+            if (fnf != null && fnf.seeker_active && !PlayerInput.Instance.IsExteriorMode)
+                return false;
+
+            return true;
         }
     }
 

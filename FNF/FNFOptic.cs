@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using GHPC.Player;
+using GHPC.Utility;
 
 namespace M2BradleyExtended.FNF
 {
@@ -66,8 +68,15 @@ namespace M2BradleyExtended.FNF
 
             Vector2 local_positon = manual_gates.transform.localPosition;
             Vector2 size_delta = manual_gates.sizeDelta;
+            if (M2Ext.alternative_tracking_gate_controls.Value)
+            {
+                AlternativeHandleKeyboardInput();
+            }
+            else
+            {
+                HandleKeyboardInput();
 
-            HandleKeyboardInput();
+            }
             if (!manager.point_targeting && manager.target && !manager.target_locked) ResolveLock();
         }
 
@@ -104,6 +113,27 @@ namespace M2BradleyExtended.FNF
             }
         }
 
+        private void AlternativeHandleKeyboardInput()
+        {
+            if (PlayerInput.Instance.IsExteriorMode) return;
+            if (InputUtil.MainPlayer.GetButton("Movement Y Pos"))
+            {
+                UpdateTrackingGateDim(0f, 144f);
+            }
+
+            if (InputUtil.MainPlayer.GetButton("Movement Y Neg"))
+            {
+                UpdateTrackingGateDim(0f, -144f);
+            }
+            if (InputUtil.MainPlayer.GetButton("Movement X Pos"))
+            {
+                UpdateTrackingGateDim(144f, 0f);
+            }
+            if (InputUtil.MainPlayer.GetButton("Movement X Neg"))
+            {
+                UpdateTrackingGateDim(-144f, 0f);
+            }
+        }
         private void ResolveLock()
         {
             float gate_x = gates.sizeDelta.x;
