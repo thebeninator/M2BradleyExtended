@@ -250,7 +250,7 @@ namespace M2BradleyExtended.FNF
 
         public void SetSeeker(bool enabled)
         {
-            if (enabled)
+            if (enabled && M2Ext.alternative_tracking_gate_controls.Value)
                 own_vehicle.Chassis.KillDriving(true, false, false);
 
             seeker_active = enabled;
@@ -268,6 +268,7 @@ namespace M2BradleyExtended.FNF
     {
         private static void Postfix()
         {
+            if(!M2Ext.alternative_tracking_gate_controls.Value) return;
             WeaponSystem weapon = PlayerInput.Instance?.CurrentPlayerWeapon?.Weapon;
             if (weapon == null) return;
 
@@ -296,6 +297,7 @@ namespace M2BradleyExtended.FNF
         
         private static bool Prefix()
         {
+            if (!M2Ext.alternative_tracking_gate_controls.Value) return true;
             WeaponSystem weapon = PlayerInput.Instance?.CurrentPlayerWeapon?.Weapon;
             if (weapon == null) return true;
 

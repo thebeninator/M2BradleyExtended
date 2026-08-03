@@ -39,6 +39,7 @@ namespace M2BradleyExtended
         static MelonPreferences_Entry<bool> has_citv;
         static MelonPreferences_Entry<bool> green_thermals;
         static MelonPreferences_Entry<bool> clear_thermals;
+        internal static MelonPreferences_Entry<bool> alternative_tracking_gate_controls;
 
         public static void Config(MelonPreferences_Category cfg) {
             m2_patch = cfg.CreateEntry<bool>("M2 Bradley Patch", true);
@@ -70,6 +71,9 @@ namespace M2BradleyExtended
 
             quickswap_bins = cfg.CreateEntry<bool>("Quick Refill Ammo Bins", false);
             quickswap_bins.Comment = "Reduces time to replenish autocannon ammo bins to 15 seconds";
+
+            alternative_tracking_gate_controls = cfg.CreateEntry<bool>("Alternative Tracking Gate Controls", false);
+            alternative_tracking_gate_controls.Comment = "Changes tracking gate controls to use vehicle steering keybinds; accelerate and brake replace up arrow and down arrow, steer right and steer left replace right arrow and left arrow.";
 
             //has_citv = cfg.CreateEntry<bool>("Has CITV", false);
             //has_citv.Comment = "Gives commander their own thermal optic; ";
