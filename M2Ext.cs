@@ -351,6 +351,11 @@ namespace M2BradleyExtended
 
                 if (tow_type.Contains("TOWFF"))
                 {
+                    if (!cfg_lrf && !cfg_ibas)
+                    {
+                        bushmaster.FCS.MaxLaserRange = 0.0001f;
+                    }
+
                     tow.GuidanceUnit.GuidanceStarted -= tow.GuidanceUnit.OnGuidanceStarted;
                     tow.GuidanceUnit.GuidanceStopped -= tow.GuidanceUnit.OnGuidanceStopped;
                     //tow.GuidanceUnit = null;

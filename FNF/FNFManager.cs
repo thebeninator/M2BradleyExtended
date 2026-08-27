@@ -250,7 +250,9 @@ namespace M2BradleyExtended.FNF
         public void SetSeeker(bool enabled)
         {
             if (enabled && M2Ext.alternative_tracking_gate_controls.Value)
+            {
                 own_vehicle.Chassis.KillDriving(true, false, false);
+            }
 
             seeker_active = enabled;
             SeekerToggled?.Invoke(seeker_active);
@@ -296,7 +298,6 @@ namespace M2BradleyExtended.FNF
     [HarmonyPatch(typeof(PlayerInput), "DriverInput")]
     internal class FNFDriverInputBlocker
     {
-        
         private static bool Prefix()
         {
             if (!M2Ext.alternative_tracking_gate_controls.Value) return true;
