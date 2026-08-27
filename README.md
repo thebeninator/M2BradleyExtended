@@ -1,3 +1,9 @@
+<b>attributions</b>
+
+QwertyRyo: implemented alternative controls for Super Javelin tracking gates
+
+___
+
 does NOT require the Vehicle Preloader
 
 adds stuff for the M2 Bradley. unfinished but playable
