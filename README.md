@@ -21,6 +21,8 @@ Conversions:
 
 features the preset system for customizable randomization
 
+please be aware that if you intend on using the preset system you MUST be on melonloader version v0.6.1 (older may work but i have not tested it)
+
 <img width="1146" height="611" alt="image" src="https://github.com/user-attachments/assets/526340d7-3152-4ee7-8ac7-ae4d67f66838" />
 
 ___
