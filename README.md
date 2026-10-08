@@ -1,5 +1,6 @@
 <b>attributions</b>
 
+Vigilante: M2A2 turret basket & IBAS (with modification)
 QwertyRyo: implemented alternative controls for Super Javelin tracking gates
 
 ___
