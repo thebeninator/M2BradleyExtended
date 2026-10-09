@@ -55,7 +55,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Tomlet, Version=5.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\GHPC MODDED\MelonLoader\Dependencies\SupportModules\Tomlet.dll</HintPath>
+      <HintPath>D:\GHPC MODDED\MelonLoader\net35\Tomlet.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Addressables">
       <HintPath>D:\GHPC MODDED\GHPC_Data\Managed\Unity.Addressables.dll</HintPath>
@@ -102,6 +102,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\GHPC MODDED\GHPC_Data\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
+    <Reference Include="VanillaAssetUtil">
+      <HintPath>D:\GHPC MODDED\Mods\VanillaAssetUtil.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Airburst\AirburstManager.cs" />
@@ -121,10 +124,8 @@
     <Compile Include="M2Ext.cs" />
     <Compile Include="M2Preset.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="ModUtil\AssetUtil.cs" />
     <Compile Include="ModUtil\Module.cs" />
     <Compile Include="ModUtil\ModuleManager.cs" />
-    <Compile Include="ModUtil\VehicleModule.cs" />
     <Compile Include="Presets\PresetManager.cs" />
     <Compile Include="Presets\PresetTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

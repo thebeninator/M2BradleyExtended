@@ -9,6 +9,7 @@ using GHPC.Weaponry;
 using ModUtil;
 using GHPC.Equipment;
 using UnityEngine.UI;
+using VanillaAssetUtil.AssetUtil;
 
 namespace M2BradleyExtended
 {
@@ -153,15 +154,15 @@ namespace M2BradleyExtended
 
         public override void LoadDynamicAssets()
         {
-            if (!AssetUtil.VehicleInMission("M2 Bradley") && !AssetUtil.VehicleInMission("M2 Bradley(AP heavy belt temp) Variant")) return;
+            if (!AssetUtilApi.VehicleInMission("M2 Bradley") && !AssetUtilApi.VehicleInMission("M2 Bradley(AP heavy belt temp) Variant")) return;
 
-            AssetUtil.LoadVanillaVehicle("M2BRADLEY"); // force load the codices immediately
+            AssetUtilApi.LoadVanillaVehicle("M2BRADLEY"); // force load the codices immediately
             m791_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_25mm_M791_APDS").First();
             m792_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_25mm_M792_HE").First();
             itow_round_codex = Resources.FindObjectsOfTypeAll<AmmoCodexScriptable>().Where(o => o.name == "ammo_I-TOW").First();
             Ammo.Init();
 
-            Vehicle m60a3 = AssetUtil.LoadVanillaVehicle("M60A3TTS");
+            Vehicle m60a3 = AssetUtilApi.LoadVanillaVehicle("M60A3TTS", temp: true);
             flir_blit_mat_green = m60a3.transform.Find("Turret Scripts/Sights/FLIR").GetComponent<CameraSlot>().FLIRBlitMaterialOverride;
 
             ibas_font = Resources.FindObjectsOfTypeAll<TMPro.TMP_FontAsset>().Where(o => o.name == "VCR_OSD_MONO_1 green").First();

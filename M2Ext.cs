@@ -73,7 +73,7 @@ namespace M2BradleyExtended
             quickswap_bins.Comment = "Reduces time to replenish autocannon ammo bins to 15 seconds";
 
             alternative_tracking_gate_controls = cfg.CreateEntry<bool>("Alternative Tracking Gate Controls", false);
-            alternative_tracking_gate_controls.Comment = "Changes tracking gate controls to use vehicle steering keybinds; accelerate and brake replace up arrow and down arrow, steer right and steer left replace right arrow and left arrow.";
+            alternative_tracking_gate_controls.Comment = "For Super Javelin seeker view; accelerate and brake replace up and down arrows; steer right and left replace right and left arrows.";
 
             //has_citv = cfg.CreateEntry<bool>("Has CITV", false);
             //has_citv.Comment = "Gives commander their own thermal optic; ";

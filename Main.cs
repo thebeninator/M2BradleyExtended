@@ -8,7 +8,7 @@ using UnityEngine;
 using ModUtil;
 using Presets;
 
-[assembly: MelonInfo(typeof(Mod), "M2 Bradley Extended", "0.9.6", "ATLAS")]
+[assembly: MelonInfo(typeof(Mod), "M2 Bradley Extended", "0.9.6C", "ATLAS")]
 [assembly: MelonGame("Radian Simulations LLC", "GHPC")]
 
 namespace M2BradleyExtended
@@ -23,8 +23,6 @@ namespace M2BradleyExtended
         internal IEnumerator OnGameReady(GameState _)
         {
             vics = GameObject.FindObjectsByType<Vehicle>(FindObjectsSortMode.None);
-
-            module_manager.LoadAllDynamicAssets();
 
             yield break;
         }
@@ -47,22 +45,25 @@ namespace M2BradleyExtended
             //File.WriteAllText(Path.Combine(MelonEnvironment.ModsDirectory + "/M2Extended/Presets", "template.cfg"), toml_string);
         }
 
-        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+        public override void OnSceneWasLoaded(int build_index, string scene_name)
         {
-            module_manager.UnloadAllDynamicAssets();
-
-            if (sceneName == "MainMenu2_Scene" || sceneName == "MainMenu2-1_Scene" || sceneName == "t64_menu")
+            if (scene_name == "MainMenu2_Scene" || scene_name == "MainMenu2-1_Scene" || scene_name == "t64_menu")
             {
                 module_manager.LoadAllStaticAssets();
-                AssetUtil.ReleaseVanillaAssets();
             }
 
-            if (Util.menu_screens.Contains(sceneName)) return;
+            if (Util.menu_screens.Contains(scene_name)) return;
 
             valid_scene_count++;
 
+            if (valid_scene_count == 1)
+            {
+                module_manager.UnloadAllDynamicAssets();
+            }
+
             if (valid_scene_count == 2)
             {
+                module_manager.LoadAllDynamicAssets();
                 StateController.RunOrDefer(GameState.PlayerReady, new GameStateEventHandler(OnGameReady), GameStatePriority.Medium);
                 StateController.RunOrDefer(GameState.PlayerReady, new GameStateEventHandler(M2Ext.Convert), GameStatePriority.Medium);
                 StateController.RunOrDefer(GameState.GameReady, new GameStateEventHandler(Ammo.SetupEraOptimizations), GameStatePriority.Lowest);
