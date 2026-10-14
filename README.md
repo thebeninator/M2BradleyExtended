@@ -1,4 +1,4 @@
-<b>Attributions</b>
+# Attributions
 
 Vigilante: M2A2 turret basket & IBAS (with modification)
 
