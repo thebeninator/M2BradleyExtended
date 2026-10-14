@@ -1,8 +1,11 @@
-<b>attributions</b>
+<b>Attributions</b>
 
 Vigilante: M2A2 turret basket & IBAS (with modification)
 
 QwertyRyo: implemented alternative controls for Super Javelin tracking gates
+
+# Dependencies
+VanillaAssetUtil: https://github.com/thebeninator/VanillaAssetUtil/releases/latest
 
 ___
 
