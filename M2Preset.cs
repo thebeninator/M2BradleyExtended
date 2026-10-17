@@ -12,5 +12,6 @@ namespace M2BradleyExtended
         public bool EnhancedM242 { get; set; }
         public bool XM913 { get; set; }
         public bool QuickRefillBins { get; set; }
+        public bool RapidFireM242 { get; set; }
     }
 }

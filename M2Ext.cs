@@ -32,6 +32,7 @@ namespace M2BradleyExtended
         static MelonPreferences_Entry<string> javelin_alternate_msl_type;
         static MelonPreferences_Entry<bool> guarantee_player_javelin;
         static MelonPreferences_Entry<bool> has_enhanced_bushmaster;
+        static MelonPreferences_Entry<bool> has_rapid_fire;
         static MelonPreferences_Entry<bool> use_xm913;
 
         static MelonPreferences_Entry<bool> has_lrf;
@@ -66,6 +67,9 @@ namespace M2BradleyExtended
             has_enhanced_bushmaster = cfg.CreateEntry<bool>("Enhanced M242 Bushmaster", false);
             has_enhanced_bushmaster.Comment = "Increases autocannon accuracy";
 
+            has_rapid_fire = cfg.CreateEntry<bool>("Rapid-fire M242 Bushmaster", false);
+            has_rapid_fire.Comment = "500 rpm; has no effect on the XM913";
+
             use_xm913 = cfg.CreateEntry<bool>("50mm XM913 Autocannon", false);
             use_xm913.Comment = "Replaces the M242; comes with its own APFSDS and HEAB rounds";
 
@@ -98,6 +102,7 @@ namespace M2BradleyExtended
             bool cfg_xm913 = use_xm913.Value;
             bool cfg_quick_restock = quickswap_bins.Value;
             bool cfg_addon_armour = m2a2_armour_package.Value;
+            bool cfg_has_rapid_fire = has_rapid_fire.Value;
 
             if (use_preset_pool.Value)
             {
@@ -116,6 +121,7 @@ namespace M2BradleyExtended
                 cfg_xm913 = preset.XM913;
                 cfg_quick_restock = preset.QuickRefillBins;
                 cfg_addon_armour = preset.AddonArmour;
+                cfg_has_rapid_fire = preset.RapidFireM242;
             }
 
             GameObject go = vic.gameObject;
@@ -138,6 +144,13 @@ namespace M2BradleyExtended
             Transform night_hud = night_optic.transform.Find("M2 Bradley GPS canvas (1)/HUD elements");
             Transform[] huds = new Transform[] { day_hud, night_hud };
 
+            if (cfg_has_rapid_fire)
+            {
+                bushmaster.WeaponSound._singleShotMode = false;
+                bushmaster.WeaponSound.LoopEventPath = "event:/Weapons/autocannon_m242_500rpm";
+                bushmaster_feed._totalCycleTime = 0.12f;
+            }
+
             if (cfg_xm913)
             {
                 GameObject m913 = GameObject.Instantiate(Assets.m913_prefab, rig);
@@ -145,10 +158,12 @@ namespace M2BradleyExtended
                 m913.transform.localEulerAngles = Vector3.zero;
 
                 bushmaster.BaseDeviationAngle = 0.065f / 2.2f;
+                bushmaster.WeaponSound._singleShotMode = true;
                 bushmaster.WeaponSound.SingleShotEventPaths[0] = "event:/Weapons/canon_73mm-2A28Grom";
                 bushmaster.Impulse = 7500f;
                 bushmaster.RecoilBlurMultiplier = 1.55f;
                 bushmaster.Feed._totalCycleTime = 0.4f;
+
                 bushmaster.transform.localPosition = new Vector3(0.0826f, 0.0085f, 2.6239f);
 
                 AnimatedPart gun_animator = bushmaster.Feed.RoundCycleStages[0].AnimatedParts[0];

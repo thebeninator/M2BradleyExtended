@@ -8,7 +8,7 @@ using UnityEngine;
 using ModUtil;
 using Presets;
 
-[assembly: MelonInfo(typeof(Mod), "M2 Bradley Extended", "0.9.6C", "ATLAS")]
+[assembly: MelonInfo(typeof(Mod), "M2 Bradley Extended", "0.9.6D", "ATLAS")]
 [assembly: MelonGame("Radian Simulations LLC", "GHPC")]
 
 namespace M2BradleyExtended
