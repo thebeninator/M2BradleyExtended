@@ -2,11 +2,10 @@
 using System.Linq;
 using GHPC.Equipment.Optics;
 using GHPC.Weapons;
+using M2BradleyExtended.Airburst;
+using ModUtil;
 using Reticle;
 using UnityEngine;
-using ModUtil;
-using M2BradleyExtended.FNF;
-using M2BradleyExtended.Airburst;
 
 namespace M2BradleyExtended
 {
@@ -86,7 +85,6 @@ namespace M2BradleyExtended
             day_optic.reticleMesh.SMR = null;
             day_optic.reticleMesh.Load();
             day_optic.RotateAzimuth = true;
-            day_optic.Alignment = OpticAlignment.BoresightStabilized;
             day_optic.slot.VibrationShakeMultiplier = 0f;
             day_optic.slot.VibrationBlurScale = 0f;
 
@@ -109,7 +107,6 @@ namespace M2BradleyExtended
                 },
             };
 
-            night_optic.Alignment = OpticAlignment.BoresightStabilized;
             night_optic.ReadyToFireObject = ibas_hud.transform.Find("ammo/ready box").gameObject;
             night_optic.slot.VibrationShakeMultiplier = 0f;
             night_optic.slot.VibrationBlurScale = 0f;
@@ -153,7 +150,6 @@ namespace M2BradleyExtended
             {
                 airburst_manager.AirburstUIIndicator = ibas_hud.transform.Find("airburst").gameObject;
             }
-
         }
 
         private static void DayReticle() {

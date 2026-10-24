@@ -1,18 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using GHPC.State;
-using GHPC.Vehicle;
-using GHPC.Utility;
-using MelonLoader;
-using GHPC.Weapons;
 using GHPC.Equipment.Optics;
-using GHPC.Thermals;
-using GHPC.Weaponry;
-using ModUtil;
-using M2BradleyExtended.Airburst;
 using GHPC.Player;
+using GHPC.State;
+using GHPC.Thermals;
+using GHPC.Utility;
+using GHPC.Vehicle;
+using GHPC.Weaponry;
+using GHPC.Weapons;
+using M2BradleyExtended.Airburst;
+using MelonLoader;
+using ModUtil;
 using Presets;
+using UnityEngine;
 
 namespace M2BradleyExtended
 {
@@ -146,8 +146,8 @@ namespace M2BradleyExtended
 
             if (cfg_has_rapid_fire)
             {
-                bushmaster.WeaponSound._singleShotMode = false;
-                bushmaster.WeaponSound.LoopEventPath = "event:/Weapons/autocannon_m242_500rpm";
+                //bushmaster.WeaponSound._singleShotMode = false;
+                //bushmaster.WeaponSound.LoopEventPath = "event:/Weapons/autocannon_m242_500rpm";
                 bushmaster_feed._totalCycleTime = 0.12f;
             }
 
@@ -198,11 +198,12 @@ namespace M2BradleyExtended
             if (cfg_lrf || cfg_ibas)
             {
                 bushmaster.FCS.MaxLaserRange = 4000f;
-                GameObject laser_ref_point = new GameObject("laser ref");
-                laser_ref_point.transform.SetParent(bushmaster.FCS.LaserOrigin);
-                laser_ref_point.transform.localEulerAngles = Vector3.zero;
-                laser_ref_point.transform.localPosition = new Vector3(0f, 0f, 5f);
-                bushmaster.FCS.LaserOrigin = laser_ref_point.transform;
+                bushmaster.FCS.LaserOrigin = bushmaster.FCS.ReferenceTransform;
+                //GameObject laser_ref_point = new GameObject("laser ref");
+                //laser_ref_point.transform.SetParent(bushmaster.FCS.LaserOrigin);
+                //laser_ref_point.transform.localEulerAngles = Vector3.zero;
+                //laser_ref_point.transform.localPosition = new Vector3(0f, 0f, 5f);
+                //bushmaster.FCS.LaserOrigin = laser_ref_point.transform;
 
                 day_optic.RangeTextArchetype = "0000";
                 day_optic.RangeTextDivideBy = 1;
