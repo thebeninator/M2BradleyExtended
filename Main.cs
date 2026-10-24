@@ -4,11 +4,11 @@ using GHPC.State;
 using GHPC.Vehicle;
 using M2BradleyExtended;
 using MelonLoader;
-using UnityEngine;
 using ModUtil;
 using Presets;
+using UnityEngine;
 
-[assembly: MelonInfo(typeof(Mod), "M2 Bradley Extended", "0.9.6D", "ATLAS")]
+[assembly: MelonInfo(typeof(Mod), "M2 Bradley Extended", "0.9.6E", "ATLAS")]
 [assembly: MelonGame("Radian Simulations LLC", "GHPC")]
 
 namespace M2BradleyExtended
