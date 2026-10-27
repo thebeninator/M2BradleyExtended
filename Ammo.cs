@@ -231,11 +231,11 @@ namespace M2BradleyExtended
             tow2b_ammo.CachedIndex = -1;
             tow2b_ammo.Category = AmmoType.AmmoCategory.Explosive;
             tow2b_ammo.RhaPenetration = 10;
-            tow2b_ammo.TntEquivalentKg = 0.1f;
+            tow2b_ammo.TntEquivalentKg = 6.15f;
             tow2b_ammo.Flight = AmmoType.FlightPattern.Hump;
             tow2b_ammo.ClimbAngle = 18;
             tow2b_ammo.DiveAngle = 0;
-            tow2b_ammo.ImpactFuseTime = 0.04f;
+            tow2b_ammo.ImpactFuseTime = 0.25f;
             tow2b_ammo.LoiterAltitude = 1.85f;
             tow2b_ammo.GuidanceNoLoiterRange = 0;
             tow2b_ammo.LoiterEndDistance = -9999f;
@@ -261,16 +261,18 @@ namespace M2BradleyExtended
             AmmoType tow2b_ammo_efp = new AmmoType();
             tow2b_ammo_efp.Name = "BGM-71F TOW-2B EFP";
             tow2b_ammo_efp.Category = AmmoType.AmmoCategory.ShapedCharge;
-            tow2b_ammo_efp.RhaPenetration = 400f;
+            tow2b_ammo_efp.RhaPenetration = 800f;
+            tow2b_ammo_efp.CertainRicochetAngle = 0;
+            tow2b_ammo_efp.AlwaysProduceBlast = true;
             tow2b_ammo_efp.Normalize = true;
             tow2b_ammo_efp.ArmorOptimizations = tow2b_ammo.ArmorOptimizations;
             tow2b_ammo_efp.Mass = tow2b_ammo.Mass;
-            tow2b_ammo_efp.TntEquivalentKg = 4.5f;
+            tow2b_ammo_efp.TntEquivalentKg = 0f;
             tow2b_ammo_efp.ForcedSpallAngle = 90;
             tow2b_ammo_efp.ImpactFuseTime = 0.00f;
             tow2b_ammo_efp.SectionalArea = tow2b_ammo.SectionalArea / 1.5f;
 
-            EFP.AddEFP(tow2b_ammo, tow2b_ammo_efp, false);
+            EFP.AddEFP(tow2b_ammo, tow2b_ammo_efp, true);
 
             tow_missiles.Add("TOW2B", tow2b_clip_codex);
 
