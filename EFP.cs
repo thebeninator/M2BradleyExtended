@@ -61,16 +61,21 @@ namespace M2BradleyExtended
 
             RaycastHit hit;
             Vector3 pos = live_round.transform.position;
-
-            if (Physics.SphereCast(pos, 1.2f, Vector3.down, out hit, 1.5f))
+            Vector3 bot = pos + Vector3.down * 4f;
+            if (Physics.CapsuleCast(pos, bot, 0.2f, Vector3.down, out hit, 4f))
             {
                 if (hit.transform.gameObject != null)
                 {
                     if (hit.collider.CompareTag("Penetrable") && !hit.collider.name.Contains("barrel") 
-                        && !hit.collider.name.Contains("Gun") && !hit.collider.name.Contains("Cannon"))
+                        && !hit.collider.name.Contains("Gun") && !hit.collider.name.Contains("Cannon")
+                        && !hit.collider.name.Contains("deployed") && !hit.collider.name.Contains("hull")
+                        && !hit.collider.name.Contains("fume") && !hit.collider.name.Contains("dirt")
+                        && !hit.collider.name.Contains("trench") && !hit.collider.name.Contains("wheel")
+                        && !hit.collider.name.Contains("track") && !hit.collider.name.Contains("side"))
                     {
-                          MelonLogger.Msg("TOW2B Detected Target, detonating");
-                          MelonLogger.Msg("Object name:" + hit.collider.name);
+                          // MelonLogger.Msg("TOW2B Detected Target, detonating");
+                          // MelonLogger.Msg("Object name:" + hit.collider.name);
+                        
                         Detonate();
                     }
 
