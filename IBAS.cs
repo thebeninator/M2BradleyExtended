@@ -85,6 +85,7 @@ namespace M2BradleyExtended
             day_optic.reticleMesh.SMR = null;
             day_optic.reticleMesh.Load();
             day_optic.RotateAzimuth = true;
+            day_optic.Alignment = OpticAlignment.BoresightStabilized;
             day_optic.slot.VibrationShakeMultiplier = 0f;
             day_optic.slot.VibrationBlurScale = 0f;
 
@@ -92,6 +93,7 @@ namespace M2BradleyExtended
             night_optic.reticleMesh.SMR = null;
             night_optic.reticleMesh.Load();
             night_optic.RotateAzimuth = true;
+            night_optic.Alignment = OpticAlignment.BoresightStabilized;
             night_optic.RangeText = ibas_hud.transform.Find("range").GetComponent<TMPro.TextMeshProUGUI>();
             night_optic.FovLimitedItems = new UsableOptic.FovLimitedItem[] 
             {
