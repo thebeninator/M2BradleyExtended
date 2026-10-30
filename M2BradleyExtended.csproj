@@ -53,7 +53,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Tomlet, Version=5.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Tomlet, Version=6.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\GHPC MODDED\MelonLoader\net35\Tomlet.dll</HintPath>
     </Reference>
