@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using GHPC.Equipment.Optics;
 using GHPC.Player;
@@ -55,7 +55,7 @@ namespace M2BradleyExtended
             use_m919_apfsds.Description = "//////////////////////////////////////////////////////////////";
 
             tow_missile_type = cfg.CreateEntry<string>("TOW Missile", "TOW2");
-            tow_missile_type.Comment = "Default, TOW2, TOW2A (anti-ERA), TOWFF (FnF, anti-era), TOWFFMP (FnF)";
+            tow_missile_type.Comment = "Default, TOW2, TOW2A (anti-ERA),TOW2B (Overfly, Anti-ERA), TOWFF (FnF, anti-era), TOWFFMP (FnF)";
 
             has_lrf = cfg.CreateEntry<bool>("Has Laser Rangefinder", true);
             has_lrf.Comment = "Does NOT have automatic lead";

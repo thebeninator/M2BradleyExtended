@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -42,9 +42,9 @@ namespace M2BradleyExtended
 
         public static AmmoType towff_mp_dir_ammo = new AmmoType();
 
+        private static AmmoType tow2b_ammo = new AmmoType();
         public static AmmoCodexScriptable tow2b_round_codex;
         public static AmmoClipCodexScriptable tow2b_clip_codex;
-
         public static AmmoCodexScriptable m409a1_round_codex;
         public static AmmoClipCodexScriptable m409a1_clip_codex;
 
@@ -89,6 +89,7 @@ namespace M2BradleyExtended
             }
 
             tow2a_ammo.ArmorOptimizations = optimizations.ToArray();
+            tow2b_ammo.ArmorOptimizations = tow2a_ammo.ArmorOptimizations;
             towff_ammo.ArmorOptimizations = tow2a_ammo.ArmorOptimizations;
             towff_dir_ammo.ArmorOptimizations = tow2a_ammo.ArmorOptimizations;
 
@@ -102,6 +103,7 @@ namespace M2BradleyExtended
             M919();
             TOW2();
             TOW2A();
+            TOW2B();
             TOWFF();
             TOWFFMP();
             //M409A1();
@@ -221,6 +223,59 @@ namespace M2BradleyExtended
             tow2a_clip_codex.ClipType = tow2a_clip;
 
             tow_missiles.Add("TOW2A", tow2a_clip_codex);
+        }
+        private static void TOW2B()
+        {
+            Util.ShallowCopy(tow2b_ammo, tow2_round_codex.AmmoType);
+            tow2b_ammo.Name = "BGM-71F TOW-2B";
+            tow2b_ammo.CachedIndex = -1;
+            tow2b_ammo.Category = AmmoType.AmmoCategory.Explosive;
+            tow2b_ammo.RhaPenetration = 10;
+            tow2b_ammo.TntEquivalentKg = 6.15f;
+            tow2b_ammo.Flight = AmmoType.FlightPattern.Hump;
+            tow2b_ammo.ClimbAngle = 18;
+            tow2b_ammo.DiveAngle = 0;
+            tow2b_ammo.ImpactFuseTime = 0.25f;
+            tow2b_ammo.LoiterAltitude = 1.85f;
+            tow2b_ammo.GuidanceNoLoiterRange = 0;
+            tow2b_ammo.LoiterEndDistance = -9999f;
+
+            tow2b_ammo.NoLeadCompensation = true;
+            Util.CacheAmmo(tow2b_ammo);
+
+            if (tow2b_round_codex != null) return;
+
+            tow2b_round_codex = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
+            tow2b_round_codex.AmmoType = tow2b_ammo;
+            tow2b_round_codex.name = "tow2b_ammo";
+
+            AmmoType.AmmoClip tow2b_clip = new AmmoType.AmmoClip();
+            tow2b_clip.Capacity = 2;
+            tow2b_clip.Name = "BGM-71F TOW-2B";
+            tow2b_clip.MinimalPattern = new AmmoCodexScriptable[1];
+            tow2b_clip.MinimalPattern[0] = tow2b_round_codex;
+            tow2b_clip_codex = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
+            tow2b_clip_codex.name = "tow2b_clip";
+            tow2b_clip_codex.ClipType = tow2b_clip;
+
+            AmmoType tow2b_ammo_efp = new AmmoType();
+            tow2b_ammo_efp.Name = "BGM-71F TOW-2B EFP";
+            tow2b_ammo_efp.Category = AmmoType.AmmoCategory.ShapedCharge;
+            tow2b_ammo_efp.RhaPenetration = 800f;
+            tow2b_ammo_efp.CertainRicochetAngle = 0;
+            tow2b_ammo_efp.AlwaysProduceBlast = true;
+            tow2b_ammo_efp.Normalize = true;
+            tow2b_ammo_efp.ArmorOptimizations = tow2b_ammo.ArmorOptimizations;
+            tow2b_ammo_efp.Mass = tow2b_ammo.Mass;
+            tow2b_ammo_efp.TntEquivalentKg = 0f;
+            tow2b_ammo_efp.ForcedSpallAngle = 90;
+            tow2b_ammo_efp.ImpactFuseTime = 0.00f;
+            tow2b_ammo_efp.SectionalArea = tow2b_ammo.SectionalArea / 1.5f;
+
+            EFP.AddEFP(tow2b_ammo, tow2b_ammo_efp, true);
+
+            tow_missiles.Add("TOW2B", tow2b_clip_codex);
+
         }
 
         private static void TOWFF()

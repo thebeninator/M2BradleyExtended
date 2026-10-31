@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Linq;
 using GHPC.State;
 using GHPC.Vehicle;
@@ -67,6 +67,7 @@ namespace M2BradleyExtended
                 StateController.RunOrDefer(GameState.PlayerReady, new GameStateEventHandler(OnGameReady), GameStatePriority.Medium);
                 StateController.RunOrDefer(GameState.PlayerReady, new GameStateEventHandler(M2Ext.Convert), GameStatePriority.Medium);
                 StateController.RunOrDefer(GameState.GameReady, new GameStateEventHandler(Ammo.SetupEraOptimizations), GameStatePriority.Lowest);
+                EFP.Init();
                 valid_scene_count = 0;
             }
         }
